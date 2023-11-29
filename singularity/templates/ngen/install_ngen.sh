@@ -45,7 +45,7 @@ echo "-- Now Building NGen at /ngen/serialbuild ..."
 echo "-----------------------------------------------------------"
 cd /ngen
 # cmake -B /ngen/mpibuild -S . -DNGEN_WITH_MPI=ON -DNGEN_WITH_PYTHON=ON -DNGEN_WITH_ROUTING=ON -DNGEN_WITH_NETCDF=ON -DNGEN_QUIET=ON
-cmake -B $current_path/ngen/serialbuild -S . -DNGEN_WITH_MPI=OFF -DNGEN_WITH_PYTHON=ON -DNGEN_WITH_ROUTING=ON -DNGEN_WITH_NETCDF=ON -DNGEN_WITH_BMI_FORTRAN=ON -DNGEN_WITH_BMI_C=ON -DNGEN_QUIET=ON -DNETCDF_CXX_INCLUDE_DIR=/usr/local/include -DNETCDF_CXX_LIBRARY=/usr/local/lib64/libnetcdf-cxx4.so # -DNETCDF_INCLUDE_DIR=/usr/include -DNETCDF_LIBRARY=/usr/lib64/libnetcdf.so
+cmake -B $current_path/ngen/serialbuild -S . -DNGEN_WITH_MPI:BOOL=OFF -DNGEN_WITH_NETCDF:BOOL=ON -DNGEN_WITH_SQLITE:BOOL=ON -DNGEN_WITH_UDUNITS:BOOL=ON -DNGEN_WITH_BMI_FORTRAN:BOOL=ON -DNGEN_WITH_BMI_C:BOOL=ON -DNGEN_WITH_PYTHON:BOOL=ON -DNGEN_WITH_ROUTING:BOOL=ON -DNGEN_WITH_TESTS:BOOL=ON -DNGEN_QUIET:BOOL=ON -DNETCDF_CXX_INCLUDE_DIR=/usr/local/include -DNETCDF_CXX_LIBRARY=/usr/local/lib64/libnetcdf-cxx4.so # -DNETCDF_INCLUDE_DIR=/usr/include -DNETCDF_LIBRARY=/usr/lib64/libnetcdf.so
 echo "==========================================================="
 echo "==========================================================="
 
@@ -64,7 +64,7 @@ echo "-- Now Building NGen at /ngen/parallelbuild ..."
 echo "-----------------------------------------------------------"
 cd /ngen
 # cmake -B /ngen/mpibuild -S . -DNGEN_WITH_MPI=ON -DNGEN_WITH_PYTHON=ON -DNGEN_WITH_ROUTING=ON -DNGEN_WITH_NETCDF=ON -DNGEN_QUIET=ON
-cmake -B $current_path/ngen/parallelbuild -S . -DNGEN_WITH_MPI=ON -DNGEN_WITH_PYTHON=ON -DNGEN_WITH_ROUTING=ON -DNGEN_WITH_NETCDF=ON -DNGEN_WITH_BMI_FORTRAN=ON -DNGEN_WITH_BMI_C=ON -DNGEN_QUIET=ON -DNETCDF_CXX_INCLUDE_DIR=/usr/local/include -DNETCDF_CXX_LIBRARY=/usr/local/lib64/libnetcdf-cxx4.so # -DNETCDF_INCLUDE_DIR=/usr/include -DNETCDF_LIBRARY=/usr/lib64/libnetcdf.so
+cmake -B $current_path/ngen/parallelbuild -S . -DNGEN_WITH_MPI:BOOL=ON -DNGEN_WITH_NETCDF:BOOL=ON -DNGEN_WITH_SQLITE:BOOL=ON -DNGEN_WITH_UDUNITS:BOOL=ON -DNGEN_WITH_BMI_FORTRAN:BOOL=ON -DNGEN_WITH_BMI_C:BOOL=ON -DNGEN_WITH_PYTHON:BOOL=ON -DNGEN_WITH_ROUTING:BOOL=ON -DNGEN_WITH_TESTS:BOOL=ON -DNGEN_QUIET:BOOL=ON -DNETCDF_CXX_INCLUDE_DIR=/usr/local/include -DNETCDF_CXX_LIBRARY=/usr/local/lib64/libnetcdf-cxx4.so # -DNETCDF_INCLUDE_DIR=/usr/include -DNETCDF_LIBRARY=/usr/lib64/libnetcdf.so
 echo "==========================================================="
 echo "==========================================================="
 
@@ -85,15 +85,6 @@ make partitionGenerator
 echo "==========================================================="
 echo "==========================================================="
 
-# echo ""
-# echo "==========================================================="
-# echo "-- Now Generating partition config (in data directory)"
-# echo "-----------------------------------------------------------"
-# cd /ngen/data
-# /ngen/mpibuild/partitionGenerator catchment_data.geojson nexus_data.geojson partition_config.json 3 '' ''
-# echo "==========================================================="
-# echo "==========================================================="
-
 echo ""
 echo "==========================================================="
 echo "-- Now Creating symbolink link ..."
@@ -102,5 +93,6 @@ ln -s /ngen/serialbuild/ngen /dmod/bin/ngen-serial
 ln -s /ngen/parallelbuild/ngen /dmod/bin/ngen-parallel
 ln -s /ngen/parallelbuild/partitionGenerator /dmod/bin/partitionGenerator
 # ln -s awi_simplified_realization.json realization_config.json
+ls -ahl /dmod/bin
 echo "==========================================================="
 echo "==========================================================="

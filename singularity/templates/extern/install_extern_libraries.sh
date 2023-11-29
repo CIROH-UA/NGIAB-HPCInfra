@@ -10,20 +10,6 @@ module list
 echo "==========================================================="
 echo "==========================================================="
 
-# echo ""
-# echo "==========================================================="
-# echo "-- Now Installing External Library t-route ..."
-# echo "-----------------------------------------------------------"
-# cd /ngen/extern/t-route
-# git checkout master
-# git pull origin master
-# cp /tmp/t-route/compiler.sh .
-# chmod 777 compiler.sh && chmod +x compiler.sh
-# ./compiler.sh no-e
-# 
-# echo "==========================================================="
-# echo "==========================================================="
-
 echo ""
 echo "==========================================================="
 echo "-- Now Installing External Library iso_c_fortran_bmi ..."
