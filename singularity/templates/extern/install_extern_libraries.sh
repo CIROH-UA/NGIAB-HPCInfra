@@ -83,7 +83,9 @@ echo "-- Setting Shared Library"
 echo "-----------------------------------------------------------"
 cd /
 mkdir -p dmod/shared_libs && mkdir -p dmod/bin && mkdir -p /dmod/datasets && mkdir -p /dmod/datasets/static
-chown -R root dmod
+cp /tmp/guide/HelloNGEN.sh /ngen/HelloNGEN.sh 
+chown -R root /dmod /ngen /root
+chmod a+x /dmod/bin/* /ngen/HelloNGEN.sh /root
 find /ngen/extern/ -name "*.so*" -exec ln -s "{}" /dmod/shared_libs/ \;
 
 ls -ahl /dmod/shared_libs

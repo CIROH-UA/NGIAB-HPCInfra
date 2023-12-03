@@ -30,5 +30,8 @@ From: rockylinux:9.2
      /tmp/t-route/install_t_route.sh
      /tmp/ngen/install_ngen.sh
 
-     rm -rf /tmp/ngen /tmp/t-route /tmp/netcdf /tmp/extern
+     rm -rf /tmp/ngen /tmp/t-route /tmp/netcdf /tmp/extern /tmp/guide
 
+%runscript
+     workdir="${1:-/ngen}"
+     bash /ngen/HelloNGEN.sh ${workdir}
