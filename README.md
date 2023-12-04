@@ -11,13 +11,12 @@ We are doing a case study : NWM run for Sipsey Fork, Black Warrior river
 * [Development](#development)
 * [Prerequisites](#prerequisites)
     + [Install Singularity](#install-sigularityce-and-validate-sigularityce-is-up)
-    + [Install WSL on Windows](#Install-WSL-on-Windows-)
-    + [Download the input data in "ngen-data" folder from S3 bucket ](#download-the-input-data-in--ngen-data--folder-from-s3-bucket--)
-      - [Linux & Mac](#linux---mac)
+    + [Install WSL on Windows](#install-wsl-on-windows)
+    + [Download the input data in "ngen-data" folder from S3 bucket ](#download-the-input-data-in-ngen-data-folder-from-s3-bucket)
 * [Run NextGen-In-A-Box](#run-nextgen-in-a-box)
-    + [Clone CloudInfra repo](#clone-cloudinfra-repo)
-    + [How to run the model script?](#how-to-run-the-model-script-)
-    + [Output of the model script](#output-of-the-model-script)
+    + [Clone Ngen-Singularity repo](#clone-ngen-singularity-repository)
+    + [How to run the model script?](#how-to-run-the-model-script)
+    + [Output of the model script](#output-of-the-model-guide-script)
 
 ## About
 The NextGen water modeling framework incorporates an encapsulation strategy that prioritizes hydrological data as its foundational element, subsequently constructing a functional abstraction of hydrological behavior. This abstraction exhibits inherent recursion, thereby facilitating an elevated level of modeling and reasoning through the application of computational modeling within the domain of hydrology.
@@ -54,34 +53,50 @@ The NextGen water modeling framework incorporates an encapsulation strategy that
                     └── install_t_route.sh
         ```
         1. [`guilde.sh`](guide.sh) : The guide script to run the simulations on the singularity image
-        2. [`singularity_ngen.def`](singularity/singularity_ngen.def) : The singularity definition file to build image
-        3. [`build.log`](singularity/build.log) : This is the last build log that shows all detailed information about the last image build process.
-        4. [`install_extern_libraries.sh`](singularity/templates/extern/install_extern_libraries.sh) : This is helper script to install external NGen module during image building process.
-        5. [`HelloNGEN.sh`](singularity/templates/guide/HelloNGEN.sh) : This is NGen execution script, which runs when the image is being executed by users.
-        6. [`install_netcdf_cxx.sh`](singularity/templates/netcdf/install_netcdf_cxx.sh) : This is helper script to install latest NetCDF C++ version during image building process.
-        7. [`install_ngen.sh`](singularity/templates/ngen/install_ngen.sh) : This is helper script to install latest NextGen version during image building process.
-        8. [`install_t_route.sh`](singularity/templates/t-route/install_t_route.sh) : This is helper script to install latest T-route version during image building process.
-
-<!-- * Documentation of how to run the model. (README.md) -->
+        2. [`README.md`](README.md) : Documentation of how to run the model and contribute in development on NGIAB
+        3. [`singularity_ngen.def`](singularity/singularity_ngen.def) : The singularity definition file to build image
+        4. [`build.log`](singularity/build.log) : This is the last build log that shows all detailed information about the last image build process.
+        5. [`install_extern_libraries.sh`](singularity/templates/extern/install_extern_libraries.sh) : This is helper script to install external NGen module during image building process.
+        6. [`HelloNGEN.sh`](singularity/templates/guide/HelloNGEN.sh) : This is NGen execution script, which runs when the image is being executed by users.
+        7. [`install_netcdf_cxx.sh`](singularity/templates/netcdf/install_netcdf_cxx.sh) : This is helper script to install latest NetCDF C++ version during image building process.
+        8. [`install_ngen.sh`](singularity/templates/ngen/install_ngen.sh) : This is helper script to install latest NextGen version during image building process.
+        9. [`install_t_route.sh`](singularity/templates/t-route/install_t_route.sh) : This is helper script to install latest T-route version during image building process. 
 
 ## Prerequisites
 
 ### Install SigularityCE and validate SigularityCE is up
-    - On *Windows*:
-        - [Install Docker Desktop on Windows](https://docs.docker.com/desktop/install/windows-install/#install-docker-desktop-on-windows)
-        - Once docker is installed, start Docker Destop.
-        - Open powershell -> right click and `Run as an Administrator` 
-        - Type `docker ps -a` to make sure docker is working.
+- On *Windows*:
+    - To install SingularityCE on Windows, first you will need to install [WSL](#install-wsl-on-windows) 
+    - [Install SingularityCE Desktop on Windows](https://docs.sylabs.io/guides/4.0/admin-guide/installation.html#windows)
+    - Once SingularityCE is installed, the singularity command will now be available in your WSL2 environment.
+    - Type `singularity exec library://ubuntu echo "Hello World!"` to make sure singularity is working.
     
-    - On *Mac*:
-        - [Install docker on Mac](https://docs.docker.com/desktop/install/mac-install/) 
-        - Once docker is installed, start Docker Desktop.
-        - Open terminal app
-        - Type `docker ps -a` to make sure docker is working.
+- On *Mac*:
+    - To install SingularityCE on Mac, the Sylabs recommend to use `Lima`, a Linux virtual machine with automatic file sharing and port forwarding (similar to WSL2).
+    <!-- - Install Lima:
+        - Install Homebrew (You can skip this step if you already have Homebrew installed on you Mac)
+        - Open terminal and run following command:
+            ```bash
+            /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+            ```
+        - Now, run following command to install Lima
+            ```bash
+            brew install lima
+            ``` -->
+    - [Install SingularityCE on Mac](https://docs.sylabs.io/guides/4.0/admin-guide/installation.html#mac) 
+    - Once Lima is installed, start Lima virtual machine by downloading `AlmaLinux 9` based [template](https://raw.githubusercontent.com/sylabs/singularity/main/examples/lima/singularity-ce.yml).
+        ```bash
+        limactl start ./singularity-ce.yml
+        ```
+    - Type `limactl shell singularity-ce` to start Lima VM with SingularityCE. Here you should be able to access Shell within Lima VM.
+    - Type `singularity --version` to make sure singularity is working.
         
-    - On *Linux*:
-        - [Install docker on Linux](https://docs.docker.com/desktop/install/linux-install/)
-        - Follow similar steps as *Mac* for starting Docker and verifying the installation
+- On *Linux*:
+    > [!NOTE]
+    > Please make sure you **install all the prerequisites** of installing SingularityCE on Linux.
+    - [Install docker on Linux](https://docs.sylabs.io/guides/4.0/admin-guide/installation.html#installation-on-linux)
+
+
 
 ### Install WSL on Windows
 
@@ -104,17 +119,20 @@ The NextGen water modeling framework incorporates an encapsulation strategy that
 
 ## Run NextGen In A Box
 
-### Clone NGIAB-CloudInfra repository
+### Clone Ngen-Singularity repository
 
 Navigate to NextGen directory and clone the repository using below commands:
 
 ```bash
-    cd ../..
-    git clone https://github.com/CIROH-UA/NGIAB-CloudInfra.git
-    git checkout main
-    cd NGIAB-CloudInfra
+    git clone https://github.com/CIROH-UA/Ngen-Singularity.git
+    cd Ngen-Singularity
+    git checkout develop
 ```  
-Once you are in *NGIAB-CloudInfra* directory, you should see `guide.sh` in it. Now, we are ready to run the model using that script. 
+Once you are in *Ngen-Singularity* directory and on `develop` branch, you can choose to:
+- **Run** the latest image from the Docker Hub
+    - All you need to do is to [execute `guide.sh`](#how-to-run-the-model-script) file, and provide absolute path of [the data](#download-the-input-data-in-ngen-data-folder-from-s3-bucket)
+- **Develop** and contribute to Ngen-Singularity repository for future enhacement of this project
+    - Please follow the [file structure](#development) and naming conventions to contribute.
 
 ### How to run the model script?
 
