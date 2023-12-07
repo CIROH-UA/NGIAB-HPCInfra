@@ -1,4 +1,12 @@
-# Welcome to NextGen Framework National Water Model Community Repo. (NextGen In A Box).
+# NextGen In A Box (NGIAB)
+
+"NextGen In A Box" (NGIAB) is a containerized version of the NextGen National Water Resources Modeling Framework.
+<p align="center">
+    <img src="https://github.com/CIROH-UA/NGIAB-CloudInfra/assets/54657/1a647024-67f8-489a-9f5e-86437449b6ff" width="300">
+</p>
+The NextGen Water Resources Modeling Framework (NextGen) is a data-centric framework developed by the NOAA OWP team to enhance the forecasting of flooding and drought, improve water resource management, and protect lives, property, and the environment. 
+
+The Cooperative Institute for Research to Operations in Hydrology (CIROH) along with Lynker has developed “NextGen In A Box” - ready-to-run, containerized and cloud-friendly version of NextGen framework, packaged with scripts to help prepare data and get you modeling more quickly. Leveraging open-source technical tools like Git, GitHub, CI/CD, Docker, NextGen In A Box fosters open research practices, enabling transparent and reproducible research outcomes within the NextGen framework.
 
 We are doing a case study : NWM run for Sipsey Fork, Black Warrior river
 - We don’t want to run all of CONUS
@@ -7,7 +15,6 @@ We are doing a case study : NWM run for Sipsey Fork, Black Warrior river
 - How can we do it? Answer: NextGen In A Box
 
 ## Table of Contents
-* [About](#about)
 * [Repository Information](#repository-information)
 * [Prerequisites](#prerequisites)
     + [Install Singularity](#install-sigularityce-and-validate-sigularityce-is-up)
@@ -17,18 +24,6 @@ We are doing a case study : NWM run for Sipsey Fork, Black Warrior river
     + [Clone Ngen-Singularity repository](#clone-ngen-singularity-repository)
     + [How to run the model script?](#how-to-run-the-model-script)
     + [Output of the model script](#output-of-the-model-guide-script)
-
-## About
-The NextGen water modeling framework incorporates an encapsulation strategy that prioritizes hydrological data as its foundational element, subsequently constructing a functional abstraction of hydrological behavior. This abstraction exhibits inherent recursion, thereby facilitating an elevated level of modeling and reasoning through the application of computational modeling within the domain of hydrology.
-* To run NextGen framework, hydrologist only have to execute the [guide script](https://github.com/CIROH-UA/Ngen-Singularity/blob/main/guide.sh) to run simulations on self-contained NextGen framework container image.
-* The guide script feature:
-    * Determine architecher of the underling system (ARM or x86)
-    * Automaticlly download latest Singularity NextGen image from Docker Hub
-    * Allow to attach input data by providing relative path of it
-    * The options of running image:
-        1. Run simulation in **Serial** mode 
-        1. Run simulation in **Parallel** mode
-        1. Run image in **Interactive shell** mode
 
 ## Repository Information
 - This branch specifically for the users of Singularity container image to run simulation on NextGen Framework
@@ -86,6 +81,16 @@ The NextGen water modeling framework incorporates an encapsulation strategy that
 ```
 
 ## Run NextGen In A Box
+To run NextGen framework, hydrologist only have to execute the [guide script](https://github.com/CIROH-UA/Ngen-Singularity/blob/main/guide.sh) to run simulations on self-contained NextGen framework container image.
+* The guide script feature:
+    * Determine architecher of the underling system (ARM or x86)
+    * Automaticlly download latest Singularity NextGen image from Docker Hub
+    * Allow to attach input data by providing relative path of it
+    * The options of running image:
+        1. Run simulation in **Serial** mode 
+        1. Run simulation in **Parallel** mode
+        1. Run image in **Interactive shell** mode
+
 
 ### Clone Ngen-Singularity repository
 
@@ -114,15 +119,14 @@ Run the following command and copy the path value:
     cd NextGen/ngen-data/AWI_03W_113060_002 # or NextGen/ngen-data/my_data if you renamed it
     pwd
     # and copy the path
-
 ```
 where <path> is the location of the folder with your data in it.
     
 - The script sets the entered directory as the `HOST_DATA_PATH` variable and uses it to find all the catchment, nexus, and realization files using the `find` command.
 - Next, the user is asked whether to run NextGen or exit. If `run_NextGen` is selected, the script pulls the related image from the awiciroh DockerHub, based on the local machine's architecture:
 ```
-For Mac with apple silicon (arm architecture), it pulls awiciroh/ciroh-ngen-image:latest.
-For x86 machines, it pulls awiciroh/ciroh-ngen-image:latest-x86.
+For Mac with apple silicon (arm architecture), it pulls XXXXX
+For x86 machines, it pulls library://trupeshkumarpatel/awiciroh/ciroh-ngen-singularity:latest.
 ```
 
 - The user is then prompted to select whether they want to run the model in parallel or serial mode.
