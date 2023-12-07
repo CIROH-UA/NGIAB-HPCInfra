@@ -152,10 +152,12 @@ fi
 echo -e "\n"
 
 if uname -a | grep arm64 || uname -a | grep aarch64 ; then
-    IMAGE_NAME=NO_IMAGE_FOUND
+    ARCH=arm64
+    IMAGE_URL=library://trupeshkumarpatel/awiciroh/ciroh-ngen-singularity:latest_arm
+    IMAGE_NAME=ciroh-ngen-singularity_latest.sif
 else
     ARCH=amd64
-    IMAGE_URL=library://trupeshkumarpatel/awiciroh/ciroh-ngen-singularity:latest
+    IMAGE_URL=library://trupeshkumarpatel/awiciroh/ciroh-ngen-singularity:latest_x86
     IMAGE_NAME=ciroh-ngen-singularity_latest.sif
 fi
 
