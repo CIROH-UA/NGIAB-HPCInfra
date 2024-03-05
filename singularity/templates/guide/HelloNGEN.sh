@@ -9,7 +9,7 @@ CYAN='\e[36m'
 RESET='\e[0m'
 
 # Increasing `ulimit` to Open files
-ulimit -n 10000
+ulimit -n 10000000
 
 # Loading Lmod
 source /etc/profile.d/modules.sh
