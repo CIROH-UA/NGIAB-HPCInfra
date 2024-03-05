@@ -16,13 +16,15 @@ From: rockylinux:9.2
      dnf install tar git gcc-c++ gcc gcc-gfortran make cmake bzip2 python3 python3-devel python3-pip udunits2-devel -y
      cp -s /usr/bin/python3 /usr/bin/python
      dnf install sqlite sqlite-devel sqlite-libs libsqlite3x libsqlite3x-devel -y
-     dnf install boost boost-devel -y
+     #dnf install boost boost-devel -y
      dnf install lapack gdal-libs gdal gdal-devel -y
      pip3 install wheel 
      pip3 install deprecated dask pyarrow geopandas pyproj fiona pandas xarray netCDF4==1.6.3 joblib toolz pyyaml Cython==3.0.3 bmipy opencv-contrib-python-headless
      dnf install libstdc++ libstdc++-devel glibc glibc-devel libgfortran openmpi openmpi-devel -y
      dnf --enablerepo=devel install texinfo -y
      dnf install netcdf netcdf-devel netcdf-fortran netcdf-fortran-devel netcdf-openmpi netcdf-openmpi-devel netcdf-fortran-openmpi netcdf-fortran-openmpi-devel -y 
+     curl -L -o boost_1_79_0.tar.bz2 https://sourceforge.net/projects/boost/files/boost/1.79.0/boost_1_79_0.tar.bz2/download
+     tar -xjf boost_1_79_0.tar.bz2 /ngen/boost
 
      chmod +x /tmp/ngen/install_ngen.sh /tmp/t-route/install_t_route.sh /tmp/netcdf/install_netcdf_cxx.sh /tmp/extern/install_extern_libraries.sh
      chown -R root /tmp
