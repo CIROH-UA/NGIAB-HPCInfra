@@ -9,7 +9,7 @@ CYAN='\e[36m'
 RESET='\e[0m'
 
 # Increasing `ulimit` to Open files
-ulimit -n 10000
+ulimit -n 1000000
 
 # Loading Lmod
 source /etc/profile.d/modules.sh
@@ -35,8 +35,8 @@ auto_select_file() {
 }
 
 # Finding files
-HYDRO_FABRIC_CATCHMENTS=$(find . -name "*catchment*.geojson")
-HYDRO_FABRIC_NEXUS=$(find . -name "*nexus*.geojson")
+HYDRO_FABRIC_CATCHMENTS=$(find . -name "*datastream*.gpkg")
+HYDRO_FABRIC_NEXUS=$(find . -name "*datastream*.gpkg")
 NGEN_REALIZATIONS=$(find . -name "*realization*.json")
 
 # Auto-selecting files if only one is found
@@ -52,12 +52,35 @@ echo -e "\n"
 echo -e "${CYAN}\e[4mFound these Realization files:${RESET}" && echo "$NGEN_REALIZATIONS" || echo -e "${RED}No Realization files found.${RESET}"
 echo -e "\n"
 
-generate_partition () {
-  # $1 catchment json file
-  # $2 nexus json file
-  # $3 number of partitions
-  /dmod/bin/partitionGenerator $1 $2 partitions_$3.json $3 '' ''
+generate_partition() {
+  /dmod/bin/partitionGenerator "$1" "$2" "partitions_$3.json" "$3" '' ''
 }
+
+if [ "$2" == "auto" ]
+  then
+    echo "AUTO MODE ENGAGED"
+    echo "Running NextGen model framework in parallel mode"
+    if [ -z "$3" ]; then
+      procs=$(($(nproc) - 2))
+    else
+      procs=$3
+    fi
+
+    partitions=$(find . -name "*partitions_$procs.json")
+    if [[ -z $partitions ]]; then
+      echo "No partitions file found, generating..."
+      generate_partition "$selected_catchment" "$selected_nexus" "$procs"
+    else
+      echo "Found paritions file! "$partitions
+    fi
+
+    mpirun -n $procs /dmod/bin/ngen-parallel $selected_catchment all $selected_nexus all $selected_realization $(pwd)/partitions_$procs.json
+    echo "Run completed successfully, exiting, have a nice day!"
+    exit 0
+  else
+    echo "Entering Interactive Mode"
+    continue
+fi
 
 echo -e "${YELLOW}Select an option (type a number): ${RESET}"
 options=("Run NextGen model framework in serial mode" "Run NextGen model framework in parallel mode" "Run Bash shell" "Exit")
