@@ -1,0 +1,25 @@
+name: Build and Push Singularity Image
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: X86
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Build Singularity Image
+        run: |
+          singularity build ciroh-ngen-singularity.sif singularity/singularity_ngen.def
+
+      - name: Push Singularity Image to Library
+        run: |
+          singularity push -U ciroh-ngen-singularity.sif library://awiciroh/ngiab/ciroh-ngen-singularity:latest
