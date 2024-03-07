@@ -74,10 +74,10 @@ We are doing a case study : NWM run for Sipsey Fork, Black Warrior river
 ```bash   
     mkdir -p NextGen/ngen-data
     cd NextGen/ngen-data
-    wget --no-parent https://ciroh-ua-ngen-data.s3.us-east-2.amazonaws.com/AWI-002/AWI_03W_113060_002.tar.gz
-    tar -xf AWI_03W_113060_002.tar.gz
+    wget --no-parent https://ciroh-ua-ngen-data.s3.us-east-2.amazonaws.com/AWI-004/AWI_09_004.tar.gz
+    tar -xf AWI_09_004.tar.gz
     # to rename your folder
-    mv AWI_03W_113060_002 my_data
+    mv AWI_09_004 my_data
 ```
 
 ## Run NextGen In A Box
