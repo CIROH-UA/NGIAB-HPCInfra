@@ -25,5 +25,4 @@ jobs:
 
       - name: Push Singularity Image to Library
         run: |
-          echo ${{ secrets.SINGULARITY_TOKEN }} | singularity remote login -u awiciroh --password-stdin
           sudo singularity push -U ciroh-ngen-singularity.sif library://awiciroh/ngiab/ciroh-ngen-singularity:latest
