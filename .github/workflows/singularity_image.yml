@@ -18,8 +18,8 @@ jobs:
 
       - name: Build Singularity Image
         run: |
-          singularity build ciroh-ngen-singularity.sif singularity/singularity_ngen.def
+          sudo singularity build ciroh-ngen-singularity.sif singularity/singularity_ngen.def
 
       - name: Push Singularity Image to Library
         run: |
-          singularity push -U ciroh-ngen-singularity.sif library://awiciroh/ngiab/ciroh-ngen-singularity:latest
+          sudo singularity push -U ciroh-ngen-singularity.sif library://awiciroh/ngiab/ciroh-ngen-singularity:latest
