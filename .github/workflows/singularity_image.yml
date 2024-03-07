@@ -26,3 +26,5 @@ jobs:
       - name: Push Singularity Image to Library
         run: |
           sudo singularity push -U ciroh-ngen-singularity.sif library://awiciroh/ngiab/ciroh-ngen-singularity:latest
+        env:
+          SINGULARITY_HUB_TOKEN: ${{ secrets.SINGULARITY_HUB_TOKEN }}
