@@ -19,9 +19,9 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      #- name: Build Singularity Image
-      #  run: |
-      #    sudo singularity build ciroh-ngen-singularity.sif singularity_ngen.def
+      - name: Build Singularity Image
+        run: |
+          sudo singularity build ciroh-ngen-singularity.sif singularity_ngen.def
 
       - name: Push Singularity Image to Library
         run: |
