@@ -25,4 +25,4 @@ jobs:
 
       - name: Push Singularity Image to Library
         run: |
-          singularity push -U /home/ubuntu/workspace/Ngen-Singularity/singularity/ciroh-ngen-singularity.sif library://awiciroh/ngiab/ciroh-ngen-singularity:latest
+          singularity push -U ciroh-ngen-singularity.sif library://awiciroh/ngiab/ciroh-ngen-singularity:latest
