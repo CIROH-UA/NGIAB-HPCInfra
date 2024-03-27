@@ -25,6 +25,7 @@ jobs:
 
       - name: Test
         run: |
+          rm -rf /home/ubuntu/workspace/AWI_09_004/partitions*.json
           rm -rf /home/ubuntu/workspace/AWI_09_004/*.csv
           rm -rf /home/ubuntu/workspace/AWI_09_004/*.parquet
           rm -rf /home/ubuntu/workspace/AWI_09_004/outputs/*
