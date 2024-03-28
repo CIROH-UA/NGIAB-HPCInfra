@@ -29,7 +29,7 @@ jobs:
           rm -rf /home/ubuntu/workspace/AWI_09_004/*.csv
           rm -rf /home/ubuntu/workspace/AWI_09_004/*.parquet
           rm -rf /home/ubuntu/workspace/AWI_09_004/outputs/*
-          singularity run --bind /home/ubuntu/workspace/AWI_09_004:/ngen/ngen/data ciroh-ngen-singularity.sif "/ngen/ngen/data auto"
+          singularity run --bind /home/ubuntu/workspace/AWI_09_004:/ngen/ngen/data ciroh-ngen-singularity.sif "/ngen/ngen/data auto 2"
           output_count=`ls /home/ubuntu/workspace/AWI_09_004/outputs | wc -l`
           if [[ "$output_count" < 1 ]]; then
             echo "No outputs found"
