@@ -30,7 +30,14 @@ jobs:
           rm -rf /home/ubuntu/workspace/AWI_09_004/*.parquet
           rm -rf /home/ubuntu/workspace/AWI_09_004/outputs/*
           singularity run --bind /home/ubuntu/workspace/AWI_09_004:/ngen/ngen/data ciroh-ngen-singularity.sif /ngen/ngen/data auto
-        
+          output_count=`ls /home/ubuntu/workspace/AWI_09_004/outputs | wc -l`
+          if [[ "$output_count" < 1 ]]; then
+            echo "No outputs found"
+            exit 1
+          else
+            echo "Test run successfully"
+          fi
+          
       - name: Push Singularity Image to Library
         run: |
           singularity push -U ciroh-ngen-singularity.sif library://awiciroh/ngiab/ciroh-ngen-singularity:latest
