@@ -1,4 +1,5 @@
 #!/bin/bash
+
 # Color definitions
 BBlack='\033[1;30m'
 BRed='\033[1;31m'
@@ -21,6 +22,7 @@ Color_Off='\033[0m'
 set -e
 
 CONFIG_FILE="$HOME/.host_data_path.conf"
+TETHYS_SCRIPT="./viewOnTethys.sh"
 
 echo -e "\n========================================================="
 echo -e "${UWhite} Welcome to CIROH-UA:NextGen National Water Model App! ${Color_Off}"
@@ -46,6 +48,12 @@ else
     read -erp "Enter your input data directory path (use absolute path): " HOST_DATA_PATH
 fi
 
+# Check the directory exists
+if [ ! -d "$HOST_DATA_PATH" ]; then
+  echo -e "${BRed}Directory does not exist. Exiting the program.${Color_Off}"
+  exit 0
+fi
+
 # Save the new path to the config file
 echo "$HOST_DATA_PATH" > "$CONFIG_FILE"
 echo -e "The Directory you've given is:\n$HOST_DATA_PATH\n"
@@ -56,7 +64,7 @@ validate_directory() {
     local color=$3
 
     if [ -d "$dir" ]; then
-        local count=$(ls "$dir" | wc -l)
+        local count=$(find $dir -type f | uniq | wc -l)
         echo -e "${color}${name}${Color_Off} exists. $count ${name} found."
     else
         echo -e "Error: Directory $dir does not exist."
@@ -74,7 +82,7 @@ cleanup_folder() {
     local folder_name="$3"
 
     # Construct the find command
-    local find_cmd="find \"$folder_path\" -maxdepth 1 -type f \( $file_types \)"
+    local find_cmd="find \"$folder_path\" -maxdepth 2 -type f \( $file_types \)"
 
     # Execute the find command and count the results
     local file_count=$(eval "$find_cmd" 2> /dev/null | wc -l)
@@ -98,7 +106,7 @@ choose_option() {
                 echo "Cleaning folder for fresh run"
 
                 # Construct the find delete command
-                local find_delete_cmd="find \"$folder_path\" -maxdepth 1 -type f \( $file_types \) -delete"
+                local find_delete_cmd="find \"$folder_path\" -maxdepth 2 -type f \( $file_types \) -delete"
 
                 # Execute the find delete command
                 eval "$find_delete_cmd"
@@ -122,8 +130,9 @@ choose_option() {
 # Cleanup Process for Outputs Folder
 cleanup_folder "$HOST_DATA_PATH/outputs/" "-name '*' " "Outputs"
 
-# Cleanup Process for ngen/data Folder
-cleanup_folder "$HOST_DATA_PATH/" "-name '*.parquet' -o -name '*.csv' -o -name '*.cn'" "ngen/data"
+# Cleanup Process for restarts Folder
+cleanup_folder "$HOST_DATA_PATH/restarts/" "-name '*' " "Restarts"
+
 
 
 # File discovery
@@ -131,16 +140,16 @@ echo -e "\nLooking in the provided directory gives us:"
 find_files() {
     local path=$1
     local name=$2
-    local color=$3
+    local regex=$3
+    local color=$4
 
-    local files=$(find "$path" -iname "*$name*.*")
+    local files=$(find "$path" -iname "$regex")
     echo -e "${color}Found these $name files:${Color_Off}"
     echo "$files" || echo "No $name files found."
 }
 
-find_files "$HOST_DATA_PATH" "datastream" "$UGreen"
-find_files "$HOST_DATA_PATH" "datastream" "$UGreen"
-find_files "$HOST_DATA_PATH" "realization" "$UGreen"
+find_files "$HOST_DATA_PATH" "hydrofabric" "*.gpkg" "$UGreen"
+find_files "$HOST_DATA_PATH" "realization" "realization.json" "$UGreen"
 
 # Detect Arch and Singularity
 echo -e "\nDetected ISA = $(uname -a)"
@@ -157,41 +166,50 @@ if uname -a | grep arm64 || uname -a | grep aarch64 ; then
     IMAGE_NAME=ciroh-ngen-singularity_latest.sif
 else
     ARCH=amd64
-    IMAGE_URL=library://trupeshkumarpatel/awiciroh/ciroh-ngen-singularity:latest_x86
+    IMAGE_URL=library://awiciroh/ngiab/ciroh-ngen-singularity:latest
     IMAGE_NAME=ciroh-ngen-singularity_latest.sif
 fi
 
-
 # Model run options
 echo -e "${UYellow}Select an option (type a number): ${Color_Off}"
-options=("Run NextGen Model using local singularity image" "Run Nextgen using remote singularity image" "Exit")
+options=("Run NextGen using existing local singularity image" "Run NextGen after updating to latest singularity image" "Exit")
 select option in "${options[@]}"; do
     case $option in
-        "Run NextGen Model using local singularity image")
+        "Run NextGen using existing local singularity image")
             echo "running the model"
             break
             ;;
-        "Run Nextgen using remote singularity image")
+        "Run NextGen after updating to latest singularity image")
             echo "pulling container and running the model"
-            singularity pull --arch $ARCH $IMAGE_NAME $IMAGE_URL
+            singularity pull -F --arch $ARCH $IMAGE_NAME $IMAGE_URL
             break
             ;;
         Exit)
             echo "Have a nice day!"
             exit 0
             ;;
-        *) echo "Invalid option $REPLY, 1 to continue and 2 to exit"
+        *) echo "Invalid option $REPLY, 1 to continue with existing local image, 2 to update and run, and 3 to exit"
             ;;
     esac
 done
+
 
 echo -e "\nRunning NextGen singularity container..."
 echo -e "Mounting local host directory $HOST_DATA_PATH to /ngen/ngen/data within the container."
 singularity run --bind $HOST_DATA_PATH:/ngen/ngen/data $IMAGE_NAME /ngen/ngen/data
 
 # Final output count
-Final_Outputs_Count=$(ls "$HOST_DATA_PATH/outputs" | wc -l)
+Final_Outputs_Count=$(ls "$HOST_DATA_PATH/outputs/*/*" | wc -l)
 echo -e "$Final_Outputs_Count new outputs created."
 echo -e "Any copied files can be found here: $HOST_DATA_PATH/outputs"
+
+# visualize with Tethys
+if [ $Final_Outputs_Count -gt 0 ]; then
+    ARG1="$HOST_DATA_PATH"
+    if ! "$TETHYS_SCRIPT" "$ARG1"; then
+        printf "Failed to visualize outputs in Tethys:"
+    fi
+fi
+
 echo -e "Thank you for running NextGen In A Box: National Water Model! Have a nice day!"
 exit 0

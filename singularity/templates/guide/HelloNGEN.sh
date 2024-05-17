@@ -8,21 +8,14 @@ MAGENTA='\e[35m'
 CYAN='\e[36m'
 RESET='\e[0m'
 
-# Increasing `ulimit` to Open files
-ulimit -n 1000000
-
-# Loading Lmod
-source /etc/profile.d/modules.sh
-
-# Loading OpenMPI module for Parallel Run
-module load mpi
-
 workdir="${1:-/ngen}"
 cd "${workdir}" || { echo -e "${RED}Failed to change directory to ${workdir}${RESET}"; exit 1; }
 set -e
 echo -e "${CYAN}Working directory is:${RESET}"
 pwd
 echo -e "\n"
+
+
 
 # Function to automatically select file if only one is found
 auto_select_file() {
@@ -35,8 +28,8 @@ auto_select_file() {
 }
 
 # Finding files
-HYDRO_FABRIC_CATCHMENTS=$(find . -name "*datastream*.gpkg")
-HYDRO_FABRIC_NEXUS=$(find . -name "*datastream*.gpkg")
+HYDRO_FABRIC_CATCHMENTS=$(find . -name "*.gpkg")
+HYDRO_FABRIC_NEXUS=$(find . -name "*.gpkg")
 NGEN_REALIZATIONS=$(find . -name "*realization*.json")
 
 # Auto-selecting files if only one is found
@@ -78,8 +71,7 @@ if [ "$2" == "auto" ]
     echo "Run completed successfully, exiting, have a nice day!"
     exit 0
   else
-    echo "Entering Interactive Mode"
-    continue
+    echo "Entering Interactive Mode"    
 fi
 
 echo -e "${YELLOW}Select an option (type a number): ${RESET}"
@@ -91,12 +83,15 @@ select option in "${options[@]}"; do
       n1=${selected_catchment:-$(read -p "Enter the hydrofabric catchment file path: " n1; echo "$n1")}
       n2=${selected_nexus:-$(read -p "Enter the hydrofabric nexus file path: " n2; echo "$n2")}
       n3=${selected_realization:-$(read -p "Enter the Realization file path: " n3; echo "$n3")}
-      
+
       echo -e "${GREEN}Selected files:\nCatchment: $n1\nNexus: $n2\nRealization: $n3${RESET}\n"
 
       if [ "$option" == "Run NextGen model framework in parallel mode" ]; then
         procs=$(nproc)
-        procs=2 # Temporary fixed value
+        num_catchments=$(find forcings -name *.csv | wc -l)
+        if [ $num_catchments -lt $procs ]; then
+                procs=$num_catchments
+        fi
         generate_partition "$n1" "$n2" "$procs"
         run_command="mpirun -n $procs /dmod/bin/ngen-parallel $n1 all $n2 all $n3 $(pwd)/partitions_$procs.json"
       else
@@ -104,7 +99,6 @@ select option in "${options[@]}"; do
       fi
 
       echo -e "${YELLOW}Your NGEN run command is $run_command${RESET}"
-      sleep 3
       break
       ;;
     "Run Bash shell")
@@ -114,7 +108,7 @@ select option in "${options[@]}"; do
     "Exit")
       exit 0
       ;;
-    *) 
+    *)
       echo -e "${RED}Invalid option $REPLY${RESET}"
       ;;
   esac
@@ -159,7 +153,7 @@ select option in "${options[@]}"; do
       echo -e "${GREEN}Have a nice day.${RESET}"
       break
       ;;
-    *) 
+    *)
       echo -e "${RED}Invalid option $REPLY${RESET}"
       ;;
   esac

@@ -23,6 +23,8 @@ From: rockylinux:9.2
      dnf install libstdc++ libstdc++-devel glibc glibc-devel libgfortran openmpi openmpi-devel -y
      dnf --enablerepo=devel install texinfo -y
      dnf install netcdf netcdf-devel netcdf-fortran netcdf-fortran-devel netcdf-openmpi netcdf-openmpi-devel netcdf-fortran-openmpi netcdf-fortran-openmpi-devel -y 
+     
+     # Boost installation
      curl -L -o boost_1_79_0.tar.bz2 https://sourceforge.net/projects/boost/files/boost/1.79.0/boost_1_79_0.tar.bz2/download
      tar -xjf boost_1_79_0.tar.bz2 -C /tmp/
      cp -r /tmp/boost_1_79_0/boost /usr/include/
@@ -33,6 +35,8 @@ From: rockylinux:9.2
      /tmp/netcdf/install_netcdf_cxx.sh
      /tmp/t-route/install_t_route.sh
      /tmp/ngen/install_ngen.sh
+
+     cp -R /usr/share/modulefiles/mpi /usr/share/lmod/lmod/modulefiles/Core/
 
      rm -rf /tmp/ngen /tmp/t-route /tmp/netcdf /tmp/extern /tmp/guide
 
