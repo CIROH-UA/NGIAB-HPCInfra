@@ -8,6 +8,15 @@ MAGENTA='\e[35m'
 CYAN='\e[36m'
 RESET='\e[0m'
 
+# Increasing `ulimit` to Open files
+ulimit -n 500000
+
+# Loading Lmod
+source /etc/profile.d/modules.sh
+
+# Loading OpenMPI module for Parallel Run
+module load mpi
+
 workdir="${1:-/ngen}"
 cd "${workdir}" || { echo -e "${RED}Failed to change directory to ${workdir}${RESET}"; exit 1; }
 set -e
