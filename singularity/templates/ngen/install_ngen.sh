@@ -46,7 +46,9 @@ echo "-- Now Building NGen at /ngen/serialbuild ..."
 echo "-----------------------------------------------------------"
 cd /ngen
 # cmake -B /ngen/mpibuild -S . -DNGEN_WITH_MPI=ON -DNGEN_WITH_PYTHON=ON -DNGEN_WITH_ROUTING=ON -DNGEN_WITH_NETCDF=ON -DNGEN_QUIET=ON
-cmake -B $current_path/ngen/serialbuild -S . -DNGEN_WITH_MPI:BOOL=OFF -DNGEN_WITH_NETCDF:BOOL=ON -DNGEN_WITH_SQLITE:BOOL=ON -DNGEN_WITH_UDUNITS:BOOL=ON -DNGEN_WITH_BMI_FORTRAN:BOOL=ON -DNGEN_WITH_BMI_C:BOOL=ON -DNGEN_WITH_PYTHON:BOOL=ON -DNGEN_WITH_ROUTING:BOOL=ON -DNGEN_WITH_TESTS:BOOL=ON -DNGEN_QUIET:BOOL=ON -DNETCDF_CXX_INCLUDE_DIR=/usr/local/include -DNETCDF_CXX_LIBRARY=/usr/local/lib64/libnetcdf-cxx4.so # -DNETCDF_INCLUDE_DIR=/usr/include -DNETCDF_LIBRARY=/usr/lib64/libnetcdf.so
+cmake -B $current_path/ngen/serialbuild -S . -DCMAKE_INSTALL_PREFIX=/ngen/ngen -DNGEN_WITH_EXTERN_ALL=ON -DNGEN_WITH_MPI:BOOL=OFF -DNGEN_WITH_NETCDF:BOOL=ON -DNGEN_WITH_SQLITE:BOOL=ON -DNGEN_WITH_UDUNITS:BOOL=ON -DNGEN_QUIET:BOOL=ON -DNGEN_WITH_BMI_FORTRAN:BOOL=ON -DNGEN_WITH_BMI_C:BOOL=ON -DNGEN_WITH_PYTHON:BOOL=ON -DNGEN_WITH_ROUTING:BOOL=ON -DNGEN_WITH_TESTS:BOOL=ON -DNETCDF_CXX_INCLUDE_DIR=/usr/local/include -DNETCDF_CXX_LIBRARY=/usr/local/lib64/libnetcdf-cxx4.so
+# -DNETCDF_INCLUDE_DIR=/usr/include -DNETCDF_LIBRARY=/usr/lib64/libnetcdf.so
+
 echo "==========================================================="
 echo "==========================================================="
 
@@ -65,7 +67,7 @@ echo "-- Now Building NGen at /ngen/parallelbuild ..."
 echo "-----------------------------------------------------------"
 cd /ngen
 # cmake -B /ngen/mpibuild -S . -DNGEN_WITH_MPI=ON -DNGEN_WITH_PYTHON=ON -DNGEN_WITH_ROUTING=ON -DNGEN_WITH_NETCDF=ON -DNGEN_QUIET=ON
-cmake -B $current_path/ngen/parallelbuild -S . -DNGEN_WITH_MPI:BOOL=ON -DNGEN_WITH_NETCDF:BOOL=ON -DNGEN_WITH_SQLITE:BOOL=ON -DNGEN_WITH_UDUNITS:BOOL=ON -DNGEN_WITH_BMI_FORTRAN:BOOL=ON -DNGEN_WITH_BMI_C:BOOL=ON -DNGEN_WITH_PYTHON:BOOL=ON -DNGEN_WITH_ROUTING:BOOL=ON -DNGEN_WITH_TESTS:BOOL=ON -DNGEN_QUIET:BOOL=ON -DNETCDF_CXX_INCLUDE_DIR=/usr/local/include -DNETCDF_CXX_LIBRARY=/usr/local/lib64/libnetcdf-cxx4.so # -DNETCDF_INCLUDE_DIR=/usr/include -DNETCDF_LIBRARY=/usr/lib64/libnetcdf.so
+cmake -B $current_path/ngen/parallelbuild -S . -DCMAKE_INSTALL_PREFIX=/ngen/ngen -DNGEN_WITH_EXTERN_ALL=ON -DNGEN_WITH_MPI:BOOL=ON -DNGEN_WITH_NETCDF:BOOL=ON -DNGEN_WITH_SQLITE:BOOL=ON -DNGEN_WITH_UDUNITS:BOOL=ON -DNGEN_QUIET:BOOL=ON -DNGEN_WITH_BMI_FORTRAN:BOOL=ON -DNGEN_WITH_BMI_C:BOOL=ON -DNGEN_WITH_PYTHON:BOOL=ON -DNGEN_WITH_ROUTING:BOOL=ON -DNGEN_WITH_TESTS:BOOL=ON -DNETCDF_CXX_INCLUDE_DIR=/usr/local/include -DNETCDF_CXX_LIBRARY=/usr/local/lib64/libnetcdf-cxx4.so # -DNETCDF_INCLUDE_DIR=/usr/include -DNETCDF_LIBRARY=/usr/lib64/libnetcdf.so
 echo "==========================================================="
 echo "==========================================================="
 
