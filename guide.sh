@@ -157,7 +157,7 @@ if uname -a | grep arm64 || uname -a | grep aarch64 ; then
     IMAGE_NAME=ciroh-ngen-singularity_latest.sif
 else
     ARCH=amd64
-    IMAGE_URL=library://trupeshkumarpatel/awiciroh/ciroh-ngen-singularity:latest_x86
+    IMAGE_URL=library://ciroh-it-support/ngiab/ciroh-ngen-singularity:latest_x86
     IMAGE_NAME=ciroh-ngen-singularity_latest.sif
 fi
 
@@ -173,7 +173,7 @@ select option in "${options[@]}"; do
             ;;
         "Run Nextgen using remote singularity image")
             echo "pulling container and running the model"
-            singularity pull --arch $ARCH $IMAGE_NAME $IMAGE_URL
+            singularity pull -F --arch $ARCH $IMAGE_NAME $IMAGE_URL
             break
             ;;
         Exit)
