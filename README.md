@@ -71,28 +71,38 @@ NGIAB provides a containerized and user-friendly solution for running the NextGe
 ### Install SigularityCE and validate SigularityCE is up
 <details>
 
-<summary> On *Windows*</summary>
-- To install SingularityCE on Windows, first you will need to install [WSL](#install-wsl-on-windows) 
-- [Install SingularityCE Desktop on Windows](https://docs.sylabs.io/guides/4.0/admin-guide/installation.html#windows)
-- Once SingularityCE is installed, the singularity command will now be available in your WSL2 environment.
-- Type `singularity exec library://ubuntu echo "Hello World!"` to make sure singularity is working.
+<summary> On Windows </summary>
+
+* To install SingularityCE on Windows, first you will need to install [WSL](#install-wsl-on-windows) 
+* [Install SingularityCE Desktop on Windows](https://docs.sylabs.io/guides/4.0/admin-guide/installation.html#windows)
+* Once SingularityCE is installed, the singularity command will now be available in your WSL2 environment.
+* Type `singularity exec library://ubuntu echo "Hello World!"` to make sure singularity is working.
+
 </details>
 
-- On *Mac*:
-    - To install SingularityCE on Mac, the Sylabs recommend to use `Lima`, a Linux virtual machine with automatic file sharing and port forwarding (similar to WSL2).
-    - [Install SingularityCE on Mac](https://docs.sylabs.io/guides/4.0/admin-guide/installation.html#mac) 
-    - Once Lima is installed, start Lima virtual machine by downloading `AlmaLinux 9` based [template](https://raw.githubusercontent.com/sylabs/singularity/main/examples/lima/singularity-ce.yml).
-        ```bash
-        limactl start ./singularity-ce.yml
-        ```
-    - Type `limactl shell singularity-ce` to start Lima VM with SingularityCE. Here you should be able to access Shell within Lima VM.
-    - Type `singularity --version` to make sure singularity is working.
-        
-- On *Linux*:
-    > [!NOTE]
-    > Please make sure you **install all the prerequisites** of installing SingularityCE on Linux.
-    - [Install docker on Linux](https://docs.sylabs.io/guides/4.0/admin-guide/installation.html#installation-on-linux)
+<details>
 
+<summary> On Mac </summary>
+
+- To install SingularityCE on Mac, the Sylabs recommend to use `Lima`, a Linux virtual machine with automatic file sharing and port forwarding (similar to WSL2).
+- [Install SingularityCE on Mac](https://docs.sylabs.io/guides/4.0/admin-guide/installation.html#mac) 
+- Once Lima is installed, start Lima virtual machine by downloading `AlmaLinux 9` based [template](https://raw.githubusercontent.com/sylabs/singularity/main/examples/lima/singularity-ce.yml).
+    ```bash
+        limactl start ./singularity-ce.yml
+    ```
+- Type `limactl shell singularity-ce` to start Lima VM with SingularityCE. Here you should be able to access Shell within Lima VM.
+- Type `singularity --version` to make sure singularity is working.
+</details>
+
+<details>
+
+<summary> On Linux </summary>
+
+> [!NOTE]
+> Please make sure you **install all the prerequisites** of installing SingularityCE on Linux.
+- [Install docker on Linux](https://docs.sylabs.io/guides/4.0/admin-guide/installation.html#installation-on-linux)
+
+</details>
 
 ### Install WSL on Windows
 
