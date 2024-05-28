@@ -1,18 +1,27 @@
-# NextGen In A Box (NGIAB)
+# **NextGen In A Box (NGIAB)**
 
-"NextGen In A Box" (NGIAB) is a containerized version of the NextGen National Water Resources Modeling Framework.
+**Run the NextGen National Water Resources Modeling Framework locally with ease.**
+
+NGIAB provides a containerized and user-friendly solution for running the NextGen framework, allowing you to control inputs, configurations, and execution on your local machine.
+
 <p align="center">
-    <img src="https://github.com/CIROH-UA/NGIAB-CloudInfra/assets/54657/1a647024-67f8-489a-9f5e-86437449b6ff" width="300">
+<img src="https://github.com/CIROH-UA/NGIAB-CloudInfra/blob/main/image/README/ngiab.png" width="300">
 </p>
-The NextGen Water Resources Modeling Framework (NextGen) is a data-centric framework developed by the NOAA OWP team to enhance the forecasting of flooding and drought, improve water resource management, and protect lives, property, and the environment. 
 
-The Cooperative Institute for Research to Operations in Hydrology (CIROH) along with Lynker has developed “NextGen In A Box” - ready-to-run, containerized and cloud-friendly version of NextGen framework, packaged with scripts to help prepare data and get you modeling more quickly. Leveraging open-source technical tools like Git, GitHub, CI/CD, Docker, NextGen In A Box fosters open research practices, enabling transparent and reproducible research outcomes within the NextGen framework.
+| | |
+| --- | --- |
+| ![alt text](https://ciroh.ua.edu/wp-content/uploads/2022/08/CIROHLogo_200x200.png) | Funding for this project was provided by the National Oceanic & Atmospheric Administration (NOAA), awarded to the Cooperative Institute for Research to Operations in Hydrology (CIROH) through the NOAA Cooperative Agreement with The University of Alabama (NA22NWS4320003). |
 
-We are doing a case study : NWM run for Sipsey Fork, Black Warrior river
-- We don’t want to run all of CONUS
-- We want to run NextGen locally
-- We want to have control over inputs / config.
-- How can we do it? Answer: NextGen In A Box
+<!-- [![ARM Build and push final image](https://github.com/CIROH-UA/NGIAB-CloudInfra/actions/workflows/docker_image_main_branch.yml/badge.svg)](https://github.com/CIROH-UA/NGIAB-CloudInfra/actions/workflows/docker_image_main_branch.yml)
+[![X86 Build and push final image](https://github.com/CIROH-UA/NGIAB-CloudInfra/actions/workflows/docker_image_main_x86.yml/badge.svg)](https://github.com/CIROH-UA/NGIAB-CloudInfra/actions/workflows/docker_image_main_x86.yml) -->
+
+**Why NextGen In A Box?**
+
+- **Run NextGen Locally:** Experiment with the framework and customize configurations on your local machine.
+- **Control Over Inputs:** Choose specific regions or basins for analysis and modify input data as needed.
+- **Simplified Setup:** Utilize Docker containers for effortless deployment, avoiding complex software installations.
+- **Open Research Practices:** Promote transparency and reproducibility through open-source tools like Git and GitHub.
+
 
 ## Table of Contents
 * [Repository Information](#repository-information)
