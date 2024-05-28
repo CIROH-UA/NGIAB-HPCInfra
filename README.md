@@ -40,10 +40,31 @@ NGIAB provides a containerized and user-friendly solution for running the NextGe
     ```bash 
     .
     ├── guide.sh
-    └── README.md
+    ├── README.md
+    └── singularity
+        ├── build.log
+        ├── singularity_ngen.def
+        └── templates
+            ├── extern
+            │   └── install_extern_libraries.sh
+            ├── guide
+            │   └── HelloNGEN.sh
+            ├── netcdf
+            │   └── install_netcdf_cxx.sh
+            ├── ngen
+            │   └── install_ngen.sh
+            └── t-route
+                └── install_t_route.sh
     ```
     1. [`guilde.sh`](guide.sh) : The guide script to run the simulations on the singularity image
     2. [`README.md`](README.md) : Documentation of how to run the model and contribute in development on NGIAB
+    3. [`singularity_ngen.def`](singularity/singularity_ngen.def) : The singularity definition file to build image
+    4. [`build.log`](singularity/build.log) : This is the last build log that shows all detailed information about the last image build process.
+    5. [`install_extern_libraries.sh`](singularity/templates/extern/install_extern_libraries.sh) : This is helper script to install external NGen module during image building process.
+    6. [`HelloNGEN.sh`](singularity/templates/guide/HelloNGEN.sh) : This is NGen execution script, which runs when the image is being executed by users.
+    7. [`install_netcdf_cxx.sh`](singularity/templates/netcdf/install_netcdf_cxx.sh) : This is helper script to install latest NetCDF C++ version during image building process.
+    8. [`install_ngen.sh`](singularity/templates/ngen/install_ngen.sh) : This is helper script to install latest NextGen version during image building process.
+    9. [`install_t_route.sh`](singularity/templates/t-route/install_t_route.sh) : This is helper script to install latest T-route version during image building process. 
 
 ## Prerequisites
 
