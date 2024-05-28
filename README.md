@@ -69,12 +69,15 @@ NGIAB provides a containerized and user-friendly solution for running the NextGe
 ## Prerequisites
 
 ### Install SigularityCE and validate SigularityCE is up
-- On *Windows*:
-    - To install SingularityCE on Windows, first you will need to install [WSL](#install-wsl-on-windows) 
-    - [Install SingularityCE Desktop on Windows](https://docs.sylabs.io/guides/4.0/admin-guide/installation.html#windows)
-    - Once SingularityCE is installed, the singularity command will now be available in your WSL2 environment.
-    - Type `singularity exec library://ubuntu echo "Hello World!"` to make sure singularity is working.
-    
+<details>
+
+<summary> On *Windows*</summary>
+- To install SingularityCE on Windows, first you will need to install [WSL](#install-wsl-on-windows) 
+- [Install SingularityCE Desktop on Windows](https://docs.sylabs.io/guides/4.0/admin-guide/installation.html#windows)
+- Once SingularityCE is installed, the singularity command will now be available in your WSL2 environment.
+- Type `singularity exec library://ubuntu echo "Hello World!"` to make sure singularity is working.
+</details>
+
 - On *Mac*:
     - To install SingularityCE on Mac, the Sylabs recommend to use `Lima`, a Linux virtual machine with automatic file sharing and port forwarding (similar to WSL2).
     - [Install SingularityCE on Mac](https://docs.sylabs.io/guides/4.0/admin-guide/installation.html#mac) 
