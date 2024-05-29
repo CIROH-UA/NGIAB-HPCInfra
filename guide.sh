@@ -157,7 +157,7 @@ if uname -a | grep arm64 || uname -a | grep aarch64 ; then
     IMAGE_NAME=ciroh-ngen-singularity_latest.sif
 else
     ARCH=amd64
-    IMAGE_URL=library://trupeshkumarpatel/awiciroh/ciroh-ngen-singularity:latest_x86
+    IMAGE_URL=library://ciroh-it-support/ngiab/ciroh-ngen-singularity:latest_x86
     IMAGE_NAME=ciroh-ngen-singularity_latest.sif
 fi
 
@@ -173,7 +173,7 @@ select option in "${options[@]}"; do
             ;;
         "Run Nextgen using remote singularity image")
             echo "pulling container and running the model"
-            singularity pull --arch $ARCH $IMAGE_NAME $IMAGE_URL
+            singularity pull -F --arch $ARCH $IMAGE_NAME $IMAGE_URL
             break
             ;;
         Exit)
@@ -190,7 +190,7 @@ echo -e "Mounting local host directory $HOST_DATA_PATH to /ngen/ngen/data within
 singularity run --bind $HOST_DATA_PATH:/ngen/ngen/data $IMAGE_NAME /ngen/ngen/data
 
 # Final output count
-Final_Outputs_Count=$(ls "$HOST_DATA_PATH/outputs" | wc -l)
+Final_Outputs_Count=$(find "$HOST_DATA_PATH/outputs/" -type f | wc -l)
 echo -e "$Final_Outputs_Count new outputs created."
 echo -e "Any copied files can be found here: $HOST_DATA_PATH/outputs"
 echo -e "Thank you for running NextGen In A Box: National Water Model! Have a nice day!"

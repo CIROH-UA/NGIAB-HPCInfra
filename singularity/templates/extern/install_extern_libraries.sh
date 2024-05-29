@@ -27,7 +27,7 @@ echo "-- Now Installing External Library noah-owp-modular ..."
 echo "-----------------------------------------------------------"
 cd /ngen/extern/noah-owp-modular
 # cmake -B cmake_build -S .
-cmake -DnetCDF_MOD_PATH=/usr/include/openmpi-x86_64/ -B cmake_build -S .
+cmake -DNETCDF_MODULE_DIR=/usr/lib64/gfortran/modules/openmpi/ -B cmake_build -S .
 cmake --build cmake_build --target surfacebmi -- -j 2
 
 echo "==========================================================="
@@ -87,7 +87,9 @@ cp /tmp/guide/HelloNGEN.sh /ngen/HelloNGEN.sh
 chown -R root /dmod /ngen /root
 chmod a+x /dmod/bin/* /ngen/HelloNGEN.sh /root
 find /ngen/extern/ -name "*.so*" -exec ln -s "{}" /dmod/shared_libs/ \;
-
+find /ngen/extern/noah-owp-modular -type f -iname "*.TBL" -exec cp '{}' /dmod/datasets/static  \; 
 ls -ahl /dmod/shared_libs
+echo "==========================================================="
+ls -ahl /dmod/datasets/static
 echo "==========================================================="
 echo "==========================================================="
