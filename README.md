@@ -109,19 +109,55 @@ NGIAB provides a containerized and user-friendly solution for running the NextGe
 1. Follow Microsofts latest [instructions](https://learn.microsoft.com/en-us/windows/wsl/install) to install WSL
 2. Once this is complete, follow the instructions for linux inside your wsl terminal.
 
-    
-### Download the input data in "ngen-data" folder from S3 bucket
 
-#### Linux & Mac & WSL
+### Input Data
+- **Download Sample Data:** Use the provided commands to download sample data for the Sipsey Fork case study.
+- **To generate your own data:** Refer to the [NGIAB-datapreprocessor](https://github.com/AlabamaWaterInstitute/NGIAB_data_preprocess) for instructions on generating custom input data.
+- **To generate your own data and run using NGIAB:** Refer to the [ngen-datastream repository](https://github.com/CIROH-UA/ngen-datastream/tree/main) for instructions on generating custom input data.
 
-```bash   
-    mkdir -p NextGen/ngen-data
-    cd NextGen/ngen-data
-    wget --no-parent https://ciroh-ua-ngen-data.s3.us-east-2.amazonaws.com/AWI-004/AWI_09_004.tar.gz
-    tar -xf AWI_09_004.tar.gz
-    # to rename your folder
-    mv AWI_09_004 my_data
+
+This section guides you through downloading and preparing the sample input data for the NextGen In A Box project.
+
+**Step 1: Create Project Directory**
+
+- **Linux/Mac:** Open your terminal and go to your desired folder where you want to checkout repo and ngen-data folder and run the following commands:
+```bash
+mkdir -p NextGen/ngen-data
 ```
+
+```bash
+cd NextGen/ngen-data
+```
+- **WSL (Right click and run as Admin):** Open WSL with administrator privileges and execute:
+```bash
+cd /mnt/c/Users/<Folder>
+```
+
+```bash
+mkdir -p NextGen/ngen-data
+```
+
+```bash
+cd NextGen/ngen-data
+```
+**Step 2: Download Sample Data**
+
+- **Linux/Mac/Windows WSL:** Use wget to download the compressed data file:
+```bash
+wget --no-parent https://ciroh-ua-ngen-data.s3.us-east-2.amazonaws.com/AWI-006/AWI_16_2853886_006.tar.gz
+```
+
+**Step 3: Extract and Rename**
+
+- **All Platforms:** Extract the downloaded file and optionally rename the folder:
+```bash
+tar -xf AWI_16_2853886_006.tar.gz
+```
+### Below is Optional: Rename the folder
+```bash
+mv AWI_16_2853886_006 my_data
+```
+Now you have successfully downloaded and prepared the sample input data in the NextGen/ngen-data directory. Remember to replace "my_data" with your preferred folder name if you choose to rename it.
 
 ## Run NextGen In A Box
 To run NextGen framework, hydrologist only have to execute the [guide script](https://github.com/CIROH-UA/Ngen-Singularity/blob/main/guide.sh) to run simulations on self-contained NextGen framework container image.
@@ -135,7 +171,7 @@ To run NextGen framework, hydrologist only have to execute the [guide script](ht
         1. Run image in **Interactive shell** mode
 
 
-### Clone Ngen-Singularity repository
+<!-- ### Clone Ngen-Singularity repository
 
 Navigate to NextGen directory and clone the repository using below commands:
 
@@ -201,4 +237,4 @@ Example NGEN run command for serial mode:
 ### Output of the model guide script
 
 The output files are copied to the `outputs` folder in the 'NextGen/ngen-data/AWI_03W_113060_002/' directory you created in the first step
-
+ -->
