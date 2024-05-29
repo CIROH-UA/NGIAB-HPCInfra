@@ -23,16 +23,15 @@ NGIAB provides a containerized and user-friendly solution for running the NextGe
 - **Open Research Practices:** Promote transparency and reproducibility through open-source tools like Git and GitHub.
 
 
-## Table of Contents
+<!-- ## Table of Contents
 * [Repository Information](#repository-information)
 * [Prerequisites](#prerequisites)
     + [Install Singularity](#install-sigularityce-and-validate-sigularityce-is-up)
     + [Install WSL on Windows](#install-wsl-on-windows)
-    + [Download the input data in "ngen-data" folder from S3 bucket ](#download-the-input-data-in-ngen-data-folder-from-s3-bucket)
 * [Run NextGen-In-A-Box](#run-nextgen-in-a-box)
     + [Clone Ngen-Singularity repository](#clone-ngen-singularity-repository)
     + [How to run the model script?](#how-to-run-the-model-script)
-    + [Output of the model script](#output-of-the-model-guide-script)
+    + [Output of the model script](#output-of-the-model-guide-script) -->
 
 ## Repository Information
 - This branch specifically for the users of Singularity container image to run simulation on NextGen Framework
