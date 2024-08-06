@@ -22,7 +22,6 @@ then
 fi
 git clone https://github.com/NOAA-OWP/ngen.git
 cd ngen
-git checkout f91e2ea
 echo "==========================================================="
 echo "==========================================================="
 
