@@ -34,7 +34,7 @@ cd /t-route/src/troute-config
 python -m build . \
 
 cd /t-route/src/troute-nwm
-python -m build .
+python -m build . \
 
 cd /t-route
 cp /t-route/src/troute-network/dist/*.whl /t-route/wheels
