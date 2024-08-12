@@ -21,20 +21,22 @@ git clone --progress --single-branch --branch master https://github.com/NOAA-OWP
 cd t-route
 git submodule update --init
 
+python -m pip install -r requirements.txt
+python -m pip install build
 ./compiler.sh no-e
 
 cd /t-route/src/troute-network
-python setup.py --use-cython bdist_wheel
+python -m build --no-isolation --wheel .
 
 cd /t-route/src/troute-routing
-python setup.py --use-cython bdist_wheel
+python -m build --no-isolation --wheel .
 
 # troute-config doesn't use setup.py, use build to make the wheel
 cd /t-route/src/troute-config
-python -m build . \
+python -m build --wheel .
 
 cd /t-route/src/troute-nwm
-python setup.py bdist_wheel
+python -m build --wheel .
 
 cd /t-route
 cp /t-route/src/troute-network/dist/*.whl /t-route/wheels
