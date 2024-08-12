@@ -19,7 +19,6 @@ echo "-----------------------------------------------------------"
 export FC=gfortran NETCDF=/usr/include
 git clone --progress --single-branch --branch master https://github.com/NOAA-OWP/t-route
 cd t-route
-#git checkout 59a6041
 git submodule update --init
 
 python -m pip install -r requirements.txt
