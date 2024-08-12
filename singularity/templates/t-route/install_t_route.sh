@@ -19,16 +19,16 @@ echo "-----------------------------------------------------------"
 export FC=gfortran NETCDF=/usr/include
 git clone --progress --single-branch --branch master https://github.com/NOAA-OWP/t-route
 cd t-route
-git checkout 59a6041
+#git checkout 59a6041
 git submodule update --init
 
 ./compiler.sh no-e
 
 cd /t-route/src/troute-network
-python setup.py --use-cython bdist_wheel
+python -m build --no-isolation --wheel .
 
 cd /t-route/src/troute-routing
-python setup.py --use-cython bdist_wheel
+python -m build --no-isolation --wheel .
 
 # troute-config doesn't use setup.py, use build to make the wheel
 cd /t-route/src/troute-config
