@@ -25,12 +25,12 @@ jobs:
 
       - name: Test
         run: |
-          rm -rf /home/ubuntu/workspace/AWI_09_004/partitions*.json
-          rm -rf /home/ubuntu/workspace/AWI_09_004/*.csv
-          rm -rf /home/ubuntu/workspace/AWI_09_004/*.parquet
-          rm -rf /home/ubuntu/workspace/AWI_09_004/outputs/*
-          singularity run --bind /home/ubuntu/workspace/AWI_09_004:/ngen/ngen/data ciroh-ngen-singularity.sif "/ngen/ngen/data auto 2"
-          output_count=`ls /home/ubuntu/workspace/AWI_09_004/outputs | wc -l`
+          rm -rf /home/ubuntu/workspace/AWI_16_2853886_006/partitions*.json
+          rm -rf /home/ubuntu/workspace/AWI_16_2853886_006/*.csv
+          rm -rf /home/ubuntu/workspace/AWI_16_2853886_006/*.parquet
+          rm -rf /home/ubuntu/workspace/AWI_16_2853886_006/outputs/*/*
+          singularity run --bind /home/ubuntu/workspace/AWI_16_2853886_006:/ngen/ngen/data ciroh-ngen-singularity.sif "/ngen/ngen/data auto 2"
+          output_count=`ls /home/ubuntu/workspace/AWI_16_2853886_006/outputs/* | wc -l`
           if [[ "$output_count" < 1 ]]; then
             echo "No outputs found"
             exit 1
@@ -38,6 +38,34 @@ jobs:
             echo "Test run successfully"
           fi
           
-      - name: Push Singularity Image to Library
+      - name: Sign Singularity Image
         run: |
-          singularity push -U ciroh-ngen-singularity.sif library://awiciroh/ngiab/ciroh-ngen-singularity:latest
+           singularity sign --keyidx 0 ciroh-ngen-singularity.sif <<EOF
+           ${{ secrets.KEY_PASSPHRASE }}
+           EOF
+      - name: Login and Push Singularity Image
+        env:
+           SYLABS_AUTH_TOKEN: ${{ secrets.SYLABS_AUTH_TOKEN }}
+        run: |
+           # Debug: Check token length (don't print the actual token)
+           echo "Token length: ${#SYLABS_AUTH_TOKEN}"
+        
+           # Create a temporary file for the token
+           TOKEN_FILE=$(mktemp)
+           echo "$SYLABS_AUTH_TOKEN" > "$TOKEN_FILE"
+        
+           # Debug: Check file content length
+           echo "Token file content length: $(wc -c < "$TOKEN_FILE")"
+        
+           # Attempt to login
+           if singularity remote login --tokenfile "$TOKEN_FILE"; then
+              echo "Login successful"
+              # Push the image
+              singularity push ciroh-ngen-singularity.sif library://ciroh-it-support/ngiab/ciroh-ngen-singularity:latest_x86
+           else
+              echo "Login failed"
+              exit 1
+           fi
+        
+           # Clean up
+           rm "$TOKEN_FILE"

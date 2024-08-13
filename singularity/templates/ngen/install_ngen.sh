@@ -22,7 +22,6 @@ then
 fi
 git clone https://github.com/NOAA-OWP/ngen.git
 cd ngen
-git checkout f91e2ea
 echo "==========================================================="
 echo "==========================================================="
 
@@ -33,8 +32,7 @@ echo "-----------------------------------------------------------"
 git submodule update --init --recursive -- test/googletest
 git submodule update --init --recursive -- extern/pybind11
 git submodule update --init --recursive --depth 1
-#cd extern/pybind11
-#git checkout v2.6.0
+cd extern && rm -rf pybind11 && git clone https://github.com/pybind/pybind11.git && cd pybind11 && git checkout v2.11.0
 echo "==========================================================="
 echo "==========================================================="
 
