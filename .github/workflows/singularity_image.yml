@@ -47,5 +47,25 @@ jobs:
         env:
            SYLABS_AUTH_TOKEN: ${{ secrets.SYLABS_AUTH_TOKEN }}
         run: |
-           singularity remote login --tokenfile <(echo $SYLABS_AUTH_TOKEN)
-           singularity push ciroh-ngen-singularity.sif library://ciroh-it-support/ngiab/ciroh-ngen-singularity:latest
+           # Debug: Check token length (don't print the actual token)
+           echo "Token length: ${#SYLABS_AUTH_TOKEN}"
+        
+           # Create a temporary file for the token
+           TOKEN_FILE=$(mktemp)
+           echo "$SYLABS_AUTH_TOKEN" > "$TOKEN_FILE"
+        
+           # Debug: Check file content length
+           echo "Token file content length: $(wc -c < "$TOKEN_FILE")"
+        
+           # Attempt to login
+           if singularity remote login --tokenfile "$TOKEN_FILE"; then
+              echo "Login successful"
+              # Push the image
+              singularity push ciroh-ngen-singularity.sif library://ciroh-it-support/ngiab/ciroh-ngen-singularity:latest
+           else
+              echo "Login failed"
+              exit 1
+           fi
+        
+           # Clean up
+           rm "$TOKEN_FILE"
