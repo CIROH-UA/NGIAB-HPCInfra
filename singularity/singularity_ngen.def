@@ -1,45 +1,126 @@
-Bootstrap: docker 
-From: rockylinux:9.2
+Bootstrap: docker
+From: rockylinux:9.1
 
-%setup
-     cp -R ./templates/* /tmp/
+%environment
+    export TROUTE_REPO=CIROH-UA/t-route
+    export TROUTE_BRANCH=no-fiona
+    export NGEN_REPO=CIROH-UA/ngen
+    export NGEN_BRANCH=main
+    export PATH="/usr/lib64/mpich/bin:$PATH"
+    export PATH="/root/.cargo/bin:$PATH"
+    export PATH="/ngen/.venv/bin:$PATH"
 
-# install app dependencies
 %post
-     sed -i '$amax_parallel_downloads=20' /etc/dnf/dnf.conf
-     dnf upgrade -y
-     dnf update -y
-     dnf install epel-release -y
-     dnf config-manager --set-enabled crb
-     dnf update --refresh -y
-     dnf groupinstall 'Development Tools' -y
-     dnf install tar git gcc-c++ gcc gcc-gfortran make cmake bzip2 python3 python3-devel python3-pip udunits2-devel -y
-     cp -s /usr/bin/python3 /usr/bin/python
-     dnf install sqlite sqlite-devel sqlite-libs libsqlite3x libsqlite3x-devel -y
-     #dnf install boost boost-devel -y
-     dnf install lapack gdal-libs gdal gdal-devel -y
-     pip3 install wheel 
-     pip3 install deprecated dask pyarrow geopandas pyproj fiona pandas xarray netCDF4==1.6.3 joblib toolz pyyaml Cython==3.0.3 bmipy opencv-contrib-python-headless
-     dnf install libstdc++ libstdc++-devel glibc glibc-devel libgfortran openmpi openmpi-devel -y
-     dnf --enablerepo=devel install texinfo -y
-     dnf install netcdf netcdf-devel netcdf-fortran netcdf-fortran-devel netcdf-openmpi netcdf-openmpi-devel netcdf-fortran-openmpi netcdf-fortran-openmpi-devel -y 
-     
-     # Boost installation
-     curl -L -o boost_1_79_0.tar.bz2 https://sourceforge.net/projects/boost/files/boost/1.79.0/boost_1_79_0.tar.bz2/download
-     tar -xjf boost_1_79_0.tar.bz2 -C /tmp/
-     cp -r /tmp/boost_1_79_0/boost /usr/include/
-     rm -rf /tmp/boost_1_79_0
+    # Install system dependencies
+    echo "max_parallel_downloads=10" >> /etc/dnf/dnf.conf
+    dnf update -y
+    dnf install -y epel-release
+    dnf config-manager --set-enabled crb
+    dnf install -y sudo vim gcc gcc-c++ make cmake ninja-build tar git gcc-gfortran libgfortran sqlite sqlite-devel \
+        python3 python3-devel python3-pip gdal gdal-devel \
+        bzip2 expat expat-devel flex bison udunits2 udunits2-devel zlib-devel \
+        wget mpich mpich-devel hdf5 hdf5-devel netcdf netcdf-devel \
+        netcdf-fortran netcdf-fortran-devel netcdf-cxx netcdf-cxx-devel lld
 
-     chmod +x /tmp/ngen/install_ngen.sh /tmp/t-route/install_t_route.sh /tmp/netcdf/install_netcdf_cxx.sh /tmp/extern/install_extern_libraries.sh
-     chown -R root /tmp
-     /tmp/netcdf/install_netcdf_cxx.sh
-     /tmp/t-route/install_t_route.sh
-     /tmp/ngen/install_ngen.sh
+    # Build Boost
+    cd /
+    wget https://archives.boost.io/release/1.79.0/source/boost_1_79_0.tar.gz
+    tar -xzf boost_1_79_0.tar.gz
+    cd boost_1_79_0
+    ./bootstrap.sh && ./b2 && ./b2 headers
+    export BOOST_ROOT=/boost_1_79_0
 
-     cp -R /usr/share/modulefiles/mpi /usr/share/lmod/lmod/modulefiles/Core/
+    # Setup for troute
+    cd /ngen
+    export FC=gfortran
+    export NETCDF=/usr/lib64/gfortran/modules/
+    ln -s /usr/bin/python3 /usr/bin/python
 
-     rm -rf /tmp/ngen /tmp/t-route /tmp/netcdf /tmp/extern /tmp/guide
+    # Install UV and setup Python environment
+    pip3 install uv && uv venv
+    . /ngen/.venv/bin/activate
+    uv pip install -r https://raw.githubusercontent.com/$TROUTE_REPO/refs/heads/$TROUTE_BRANCH/requirements.txt
+
+    # Build t-route
+    cd /ngen/t-route
+    git clone --depth 1 --single-branch --branch $TROUTE_BRANCH https://github.com/$TROUTE_REPO.git .
+    echo $(git remote get-url origin | sed 's/\.git$//' | awk '{print $0 "/tree/" }' | tr -d '\n' && git rev-parse HEAD) >> /tmp/troute_url
+    git submodule update --init --depth 1
+    uv pip install build wheel
+
+    # Modify and run compiler
+    sed -i 's/build_[a-z]*=/#&/' compiler.sh
+    ./compiler.sh no-e
+
+    # Install troute packages
+    uv pip install --config-setting='--build-option=--use-cython' src/troute-network/
+    uv build --wheel --config-setting='--build-option=--use-cython' src/troute-network/
+    uv pip install --no-build-isolation --config-setting='--build-option=--use-cython' src/troute-routing/
+    uv build --wheel --no-build-isolation --config-setting='--build-option=--use-cython' src/troute-routing/
+    uv build --wheel --no-build-isolation src/troute-config/
+    uv build --wheel --no-build-isolation src/troute-nwm/
+
+    # Clone and build NGEN
+    cd /ngen
+    git clone --single-branch --branch $NGEN_BRANCH https://github.com/$NGEN_REPO.git
+    cd ngen
+    git submodule update --init --recursive --depth 1
+    echo $(git remote get-url origin | sed 's/\.git$//' | awk '{print $0 "/tree/" }' | tr -d '\n' && git rev-parse HEAD) >> /tmp/ngen_url
+
+    # Build NGEN
+    export COMMON_BUILD_ARGS="-DNGEN_WITH_EXTERN_ALL=ON \
+        -DNGEN_WITH_NETCDF:BOOL=ON \
+        -DNGEN_WITH_BMI_C:BOOL=ON \
+        -DNGEN_WITH_BMI_FORTRAN:BOOL=ON \
+        -DNGEN_WITH_PYTHON:BOOL=ON \
+        -DNGEN_WITH_ROUTING:BOOL=ON \
+        -DNGEN_WITH_SQLITE:BOOL=ON \
+        -DNGEN_WITH_UDUNITS:BOOL=ON \
+        -DUDUNITS_QUIET:BOOL=ON \
+        -DNGEN_WITH_TESTS:BOOL=OFF \
+        -DCMAKE_BUILD_TYPE=Debug \
+        -DCMAKE_INSTALL_PREFIX=. \
+        -DCMAKE_CXX_FLAGS='-fuse-ld=lld'"
+
+    # Build serial version
+    cmake -G Ninja -B cmake_build_serial -S . ${COMMON_BUILD_ARGS} -DNGEN_WITH_MPI:BOOL=OFF
+    cmake --build cmake_build_serial --target all -- -j $(nproc)
+
+    # Build parallel version
+    dnf install -y netcdf-cxx4-mpich-devel
+    export MPI_BUILD_ARGS="-DNGEN_WITH_MPI:BOOL=ON \
+        -DNetCDF_ROOT=/usr/lib64/mpich \
+        -DCMAKE_PREFIX_PATH=/usr/lib64/mpich \
+        -DCMAKE_LIBRARY_PATH=/usr/lib64/mpich/lib"
+    
+    cmake -G Ninja -B cmake_build_parallel -S . ${COMMON_BUILD_ARGS} ${MPI_BUILD_ARGS} \
+        -DNetCDF_CXX_INCLUDE_DIR=/usr/include/mpich-$(arch) \
+        -DNetCDF_INCLUDE_DIR=/usr/include/mpich-$(arch)
+    cmake --build cmake_build_parallel --target all -- -j $(nproc)
+
+    # Setup final directories
+    mkdir -p /dmod/datasets /dmod/datasets/static /dmod/shared_libs /dmod/bin
+    cp -a ./extern/*/cmake_build/*.so* /dmod/shared_libs/. || true
+    find ./extern/noah-owp-modular -type f -iname "*.TBL" -exec cp '{}' /dmod/datasets/static \;
+    cp -a ./cmake_build_parallel/ngen /dmod/bin/ngen-parallel || true
+    cp -a ./cmake_build_serial/ngen /dmod/bin/ngen-serial || true
+    cp -a ./cmake_build_parallel/partitionGenerator /dmod/bin/partitionGenerator || true
+    cd /dmod/bin && \
+        (stat ngen-parallel && ln -s ngen-parallel ngen) || (stat ngen-serial && ln -s ngen-serial ngen)
+
+    # Final setup
+    echo "/dmod/shared_libs/" >> /etc/ld.so.conf.d/ngen.conf && ldconfig -v
+    ln -s /dmod/bin/ngen /usr/local/bin/ngen
+    chmod a+x /dmod/bin/*
+
+    # Install final Python dependencies
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    uv self update && uv venv
+    uv pip install --no-cache-dir /tmp/*.whl netCDF4==1.6.3
+    uv pip install numpy==$(/dmod/bin/ngen --info | grep -e 'NumPy Version: ' | cut -d ':' -f 2 | uniq | xargs)
+
+%files
+    HelloNGEN.sh /ngen/HelloNGEN.sh
 
 %runscript
-     workdir="${1:-/ngen}"
-     bash /ngen/HelloNGEN.sh ${workdir}
+    exec /ngen/HelloNGEN.sh "$@"
