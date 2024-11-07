@@ -136,6 +136,19 @@ From: rockylinux:9.1
     uv pip install --no-cache-dir netCDF4==1.6.3
     uv pip install numpy==$(/dmod/bin/ngen --info | grep -e 'NumPy Version: ' | cut -d ':' -f 2 | uniq | xargs)
 
+    # Make everything in /ngen accessible
+    chmod -R 755 /ngen
+    
+    # Set permissions for critical directories and files
+    chmod -R 755 /dmod
+    chmod -R 755 /usr/local/bin
+    chmod -R 755 /ngen/.venv
+    
+    # Ensure specific files are executable
+    chmod 755 /ngen/HelloNGEN.sh
+    chmod 755 /dmod/bin/*
+    chmod 755 /usr/local/bin/ngen
+
 %files
     templates/guide/HelloNGEN.sh /ngen/HelloNGEN.sh
 
