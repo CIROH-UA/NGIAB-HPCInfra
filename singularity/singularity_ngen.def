@@ -120,7 +120,7 @@ From: rockylinux:9.1
     uv pip install numpy==$(/dmod/bin/ngen --info | grep -e 'NumPy Version: ' | cut -d ':' -f 2 | uniq | xargs)
 
 %files
-    HelloNGEN.sh /ngen/HelloNGEN.sh
+    templates/guide/HelloNGEN.sh /ngen/HelloNGEN.sh
 
 %runscript
     exec /ngen/HelloNGEN.sh "$@"
