@@ -2,15 +2,21 @@ Bootstrap: docker
 From: rockylinux:9.1
 
 %environment
-    export TROUTE_REPO=CIROH-UA/t-route
-    export TROUTE_BRANCH=no-fiona
-    export NGEN_REPO=CIROH-UA/ngen
-    export NGEN_BRANCH=main
+    export TROUTE_REPO="CIROH-UA/t-route"
+    export TROUTE_BRANCH="no-fiona"
+    export NGEN_REPO="CIROH-UA/ngen"
+    export NGEN_BRANCH="main"
     export PATH="/usr/lib64/mpich/bin:$PATH"
     export PATH="/root/.cargo/bin:$PATH"
     export PATH="/ngen/.venv/bin:$PATH"
 
 %post
+    # First set the environment variables for use in %post
+    TROUTE_REPO="CIROH-UA/t-route"
+    TROUTE_BRANCH="no-fiona"
+    NGEN_REPO="CIROH-UA/ngen"
+    NGEN_BRANCH="main"
+
     # Install system dependencies
     echo "max_parallel_downloads=10" >> /etc/dnf/dnf.conf
     dnf update -y
@@ -39,7 +45,7 @@ From: rockylinux:9.1
     # Install UV and setup Python environment
     pip3 install uv && uv venv
     . /ngen/.venv/bin/activate
-    uv pip install -r https://raw.githubusercontent.com/$TROUTE_REPO/refs/heads/$TROUTE_BRANCH/requirements.txt
+    uv pip install -r "https://raw.githubusercontent.com/${TROUTE_REPO}/refs/heads/${TROUTE_BRANCH}/requirements.txt"
 
     # Build t-route
     cd /ngen/t-route
