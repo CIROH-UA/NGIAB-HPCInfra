@@ -27,6 +27,10 @@ From: rockylinux:9.1
         bzip2 expat expat-devel flex bison udunits2 udunits2-devel zlib-devel \
         wget mpich mpich-devel hdf5 hdf5-devel netcdf netcdf-devel \
         netcdf-fortran netcdf-fortran-devel netcdf-cxx netcdf-cxx-devel lld
+    
+    # Create necessary directories
+    mkdir -p /ngen
+    mkdir -p /ngen/t-route
 
     # Build Boost
     cd /
