@@ -126,7 +126,14 @@ From: rockylinux:9.1
     # Install final Python dependencies
     curl -LsSf https://astral.sh/uv/install.sh | sh
     uv self update && uv venv
-    uv pip install --no-cache-dir /tmp/*.whl netCDF4==1.6.3
+    cd /ngen/t-route
+    for pkg in src/troute-*; do
+        if [ -d "$pkg" ]; then
+            echo "Installing package from: $pkg"
+            uv pip install --no-cache-dir "$pkg/"
+        fi
+    done
+    uv pip install --no-cache-dir netCDF4==1.6.3
     uv pip install numpy==$(/dmod/bin/ngen --info | grep -e 'NumPy Version: ' | cut -d ':' -f 2 | uniq | xargs)
 
 %files
