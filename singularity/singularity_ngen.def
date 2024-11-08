@@ -124,7 +124,7 @@ From: rockylinux:9.1
     chmod a+x /dmod/bin/*
 
     # Install final Python dependencies
-    UV_INSTALL_DIR="/root/.cargo/bin"
+    export UV_INSTALL_DIR="/root/.cargo/bin"
     export PATH="$UV_INSTALL_DIR:$PATH"
     curl -LsSf https://astral.sh/uv/install.sh | sh
     uv self update && uv venv
