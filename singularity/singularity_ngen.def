@@ -9,6 +9,7 @@ From: rockylinux:9.1
     export PATH="/usr/lib64/mpich/bin:$PATH"
     export PATH="/root/.cargo/bin:$PATH"
     export PATH="/ngen/.venv/bin:$PATH"
+    export UV_INSTALL_DIR="/root/.cargo/bin"
 
 %post
     # First set the environment variables for use in %post
@@ -16,6 +17,7 @@ From: rockylinux:9.1
     TROUTE_BRANCH="no-fiona"
     NGEN_REPO="CIROH-UA/ngen"
     NGEN_BRANCH="main"
+    UV_INSTALL_DIR="/root/.cargo/bin"
 
     # Install system dependencies
     echo "max_parallel_downloads=10" >> /etc/dnf/dnf.conf
@@ -126,11 +128,13 @@ From: rockylinux:9.1
     # Install final Python dependencies
     curl -LsSf https://astral.sh/uv/install.sh | sh
     uv self update && uv venv
-    cd /ngen/t-route
-    for pkg in src/troute-*; do
+    cd /ngen/t-route/src
+    ls -la troute-*/
+
+    for pkg in troute-network troute-routing troute-config troute-nwm; do
         if [ -d "$pkg" ]; then
             echo "Installing package from: $pkg"
-            uv pip install --no-cache-dir "$pkg/"
+            $UV_INSTALL_DIR/uv pip install --no-cache-dir "$pkg/"
         fi
     done
     uv pip install --no-cache-dir netCDF4==1.6.3
