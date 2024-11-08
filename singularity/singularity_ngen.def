@@ -124,9 +124,9 @@ From: rockylinux:9.1
     chmod a+x /dmod/bin/*
 
     # Install final Python dependencies
-    curl -LsSf https://astral.sh/uv/install.sh | sh
     UV_INSTALL_DIR="/root/.cargo/bin"
     export PATH="$UV_INSTALL_DIR:$PATH"
+    curl -LsSf https://astral.sh/uv/install.sh | sh
     uv self update && uv venv
     cd /ngen/t-route/src
     ls -la troute-*/
@@ -134,7 +134,7 @@ From: rockylinux:9.1
     for pkg in troute-network troute-routing troute-config troute-nwm; do
         if [ -d "$pkg" ]; then
             echo "Installing package from: $pkg"
-            $UV_INSTALL_DIR/uv pip install --no-cache-dir "$pkg/"
+            uv pip install --no-cache-dir "$pkg/"
         fi
     done
     uv pip install --no-cache-dir netCDF4==1.6.3
