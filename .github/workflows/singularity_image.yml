@@ -61,7 +61,7 @@ jobs:
            if singularity remote login --tokenfile "$TOKEN_FILE"; then
               echo "Login successful"
               # Push the image
-              singularity push ciroh-ngen-singularity.sif library://ciroh-it-support/ngiab/ciroh-ngen-singularity:latest_x86
+              singularity push --force ciroh-ngen-singularity.sif library://ciroh-it-support/ngiab/ciroh-ngen-singularity:latest_x86
            else
               echo "Login failed"
               exit 1
