@@ -61,7 +61,7 @@ jobs:
            if singularity remote login --tokenfile "$TOKEN_FILE"; then
               echo "Login successful"
               # Delete existing image and Push the image
-              singularity delete library://ciroh-it-support/ngiab/ciroh-ngen-singularity:latest_x86
+              singularity delete --F library://ciroh-it-support/ngiab/ciroh-ngen-singularity:latest_x86
               singularity push ciroh-ngen-singularity.sif library://ciroh-it-support/ngiab/ciroh-ngen-singularity:latest_x86
            else
               echo "Login failed"
