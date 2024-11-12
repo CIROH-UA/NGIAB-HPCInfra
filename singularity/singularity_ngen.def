@@ -3,7 +3,7 @@ From: rockylinux:9.1
 
 %environment
     export TROUTE_REPO="CIROH-UA/t-route"
-    export TROUTE_BRANCH="no-fiona"
+    export TROUTE_BRANCH="datastream"
     export NGEN_REPO="CIROH-UA/ngen"
     export NGEN_BRANCH="main"
     export PATH="/usr/lib64/mpich/bin:$PATH"
