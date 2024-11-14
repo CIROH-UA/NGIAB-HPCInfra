@@ -29,7 +29,7 @@ jobs:
           rm -rf /home/ubuntu/workspace/AWI_16_2853886_006/*.csv
           rm -rf /home/ubuntu/workspace/AWI_16_2853886_006/*.parquet
           rm -rf /home/ubuntu/workspace/AWI_16_2853886_006/outputs/*/*
-          singularity run --bind /home/ubuntu/workspace/AWI_16_2853886_006:/ngen/ngen/data ciroh-ngen-singularity.sif "/ngen/ngen/data auto 2"
+          singularity run --bind /home/ubuntu/workspace/AWI_16_2853886_006:/ngen/ngen/data ciroh-ngen-singularity.sif /ngen/ngen/data auto 2
           output_count=`ls /home/ubuntu/workspace/AWI_16_2853886_006/outputs/* | wc -l`
           if [[ "$output_count" < 1 ]]; then
             echo "No outputs found"
@@ -60,7 +60,8 @@ jobs:
            # Attempt to login
            if singularity remote login --tokenfile "$TOKEN_FILE"; then
               echo "Login successful"
-              # Push the image
+              # Delete existing image and Push the image
+              singularity delete --force library://ciroh-it-support/ngiab/ciroh-ngen-singularity:latest_x86
               singularity push ciroh-ngen-singularity.sif library://ciroh-it-support/ngiab/ciroh-ngen-singularity:latest_x86
            else
               echo "Login failed"
