@@ -53,47 +53,25 @@ NGIAB provides a containerized and user-friendly solution for running the NextGe
     4. [`HelloNGEN.sh`](singularity/templates/guide/HelloNGEN.sh) : This is NGen execution script, which runs when the image is being executed by users.
 
 ## Prerequisites
+### 1. Access a compute node
+On your HPC system, request an interactive session on a compute node using your scheduler (e.g., SLURM):
+```bash
+srun --partition=<partition_name> --nodes=1 --ntasks=1 --time=<hh:mm:ss> --pty bash
+```
+Replace `<partition_name>` and `<hh:mm:ss>` with the appropriate partition and time limits for your HPC system.
+### 2. Install SingularityCE on HPC
+Ensure SingularityCE is installed and validated on your HPC system. All operations, including data preparation and running the simulation, should be performed on a compute node, not the login node. Consult your system administrator or follow these steps:
 
-### Install SigularityCE and validate SigularityCE is up
-<details>
+**i. Check Singularity Availability**: 
 
-<summary> On Windows </summary>
+Verify that SingularityCE is installed on your HPC environment by running:
+```bash
+singularity --version
+```
+**ii. Install SingularityCE (if necessary)**: 
 
-* To install SingularityCE on Windows, first you will need to install [WSL](#install-wsl-on-windows) 
-* [Install SingularityCE Desktop on Windows](https://docs.sylabs.io/guides/4.0/admin-guide/installation.html#windows)
-* Once SingularityCE is installed, the singularity command will now be available in your WSL2 environment.
-* Type `singularity exec library://ubuntu echo "Hello World!"` to make sure singularity is working.
+Refer to the [official SingularityCE installation guide](https://docs.sylabs.io/guides/4.0/admin-guide/installation.html#installation-on-linux) for instructions tailored to Linux environments.
 
-</details>
-
-<details>
-
-<summary> On Mac </summary>
-
-- To install SingularityCE on Mac, the Sylabs recommend to use `Lima`, a Linux virtual machine with automatic file sharing and port forwarding (similar to WSL2).
-- [Install SingularityCE on Mac](https://docs.sylabs.io/guides/4.0/admin-guide/installation.html#mac) 
-- Once Lima is installed, start Lima virtual machine by downloading `AlmaLinux 9` based [template](https://raw.githubusercontent.com/sylabs/singularity/main/examples/lima/singularity-ce.yml).
-    ```bash
-        limactl start ./singularity-ce.yml
-    ```
-- Type `limactl shell singularity-ce` to start Lima VM with SingularityCE. Here you should be able to access Shell within Lima VM.
-- Type `singularity --version` to make sure singularity is working.
-</details>
-
-<details>
-
-<summary> On Linux </summary>
-
-> [!NOTE]
-> Please make sure you **install all the prerequisites** of installing SingularityCE on Linux.
-- [Install docker on Linux](https://docs.sylabs.io/guides/4.0/admin-guide/installation.html#installation-on-linux)
-
-</details>
-
-### Install WSL on Windows
-
-1. Follow Microsofts latest [instructions](https://learn.microsoft.com/en-us/windows/wsl/install) to install WSL
-2. Once this is complete, follow the instructions for linux inside your wsl terminal.
 
 
 ### Input Data
@@ -106,7 +84,7 @@ This section guides you through downloading and preparing the sample input data 
 
 **Step 1: Create Project Directory**
 
-- **Linux/Mac:** Open your terminal and go to your desired folder where you want to checkout repo and ngen-data folder and run the following commands:
+On the HPC system, create a directory for the project and data using the following commands:
 ```bash
 mkdir -p NextGen/ngen-data
 ```
@@ -114,28 +92,17 @@ mkdir -p NextGen/ngen-data
 ```bash
 cd NextGen/ngen-data
 ```
-- **WSL (Right click and run as Admin):** Open WSL with administrator privileges and execute:
-```bash
-cd /mnt/c/Users/<Folder>
-```
 
-```bash
-mkdir -p NextGen/ngen-data
-```
-
-```bash
-cd NextGen/ngen-data
-```
 **Step 2: Download Sample Data**
 
-- **Linux/Mac/Windows WSL:** Use wget to download the compressed data file:
+Use wget to download the compressed data file:
 ```bash
 wget --no-parent https://ciroh-ua-ngen-data.s3.us-east-2.amazonaws.com/AWI-007/AWI_16_2863657_007.tar.gz
 ```
 
 **Step 3: Extract and Rename**
 
-- **All Platforms:** Extract the downloaded file and optionally rename the folder:
+Extract the downloaded file and optionally rename the folder:
 ```bash
 tar -xf AWI_16_2863657_007.tar.gz
 ```
@@ -144,6 +111,22 @@ tar -xf AWI_16_2863657_007.tar.gz
 mv AWI_16_2863657_007 my_data
 ```
 Now you have successfully downloaded and prepared the sample input data in the NextGen/ngen-data directory. Remember to replace "my_data" with your preferred folder name if you choose to rename it.
+
+**Step 4: Clone and Run**
+Navigate to the NextGen directory, clone the repository, and execute the guide script:
+```bash
+cd ../../NextGen
+```
+```bash
+git clone https://github.com/CIROH-UA/NGIAB-HPCInfra.git
+```
+```bash
+cd NGIAB-HPCInfra
+```
+```bash
+./guide.sh
+```
+
 
 ## Run NextGen In A Box
 To run NextGen framework, hydrologist only have to execute the [guide script](https://github.com/CIROH-UA/Ngen-Singularity/blob/main/guide.sh) to run simulations on self-contained NextGen framework container image.
