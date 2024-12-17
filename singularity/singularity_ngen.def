@@ -5,7 +5,7 @@ From: rockylinux:9.1
     export TROUTE_REPO="CIROH-UA/t-route"
     export TROUTE_BRANCH="datastream"
     export NGEN_REPO="CIROH-UA/ngen"
-    export NGEN_BRANCH="main"
+    export NGEN_BRANCH="ngiab"
     export PATH="/usr/lib64/mpich/bin:$PATH"
     export PATH="/root/.cargo/bin:$PATH"
     export PATH="/ngen/.venv/bin:$PATH"
@@ -139,6 +139,9 @@ From: rockylinux:9.1
     done
     uv pip install --no-cache-dir netCDF4==1.6.3
     uv pip install numpy==$(/dmod/bin/ngen --info | grep -e 'NumPy Version: ' | cut -d ':' -f 2 | uniq | xargs)
+
+    # Install lstm
+    uv pip install --no-cache-dir /ngen/ngen/extern/lstm --extra-index-url https://download.pytorch.org/whl/cpu
 
     # Make everything in /ngen accessible
     chmod -R 755 /ngen
