@@ -15,7 +15,7 @@ From: rockylinux:9.1
     TROUTE_REPO="CIROH-UA/t-route"
     TROUTE_BRANCH="datastream"
     NGEN_REPO="CIROH-UA/ngen"
-    NGEN_BRANCH="main"
+    NGEN_BRANCH="ngiab"
 
     # Install system dependencies
     echo "max_parallel_downloads=10" >> /etc/dnf/dnf.conf
