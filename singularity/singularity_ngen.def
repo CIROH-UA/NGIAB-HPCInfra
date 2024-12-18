@@ -143,7 +143,7 @@ From: rockylinux:9.1
     # Install lstm
     ls -l /ngen/ngen/extern
     ls -l /ngen/ngen/extern/lstm
-    cp -r /ngen/ngen/extern/lstm/lstm /ngen/ngen/extern/lstm
+    cp -r /ngen/ngen/extern/lstm/lstm/* /ngen/ngen/extern/lstm/
     uv pip install --no-cache-dir /ngen/ngen/extern/lstm --extra-index-url https://download.pytorch.org/whl/cpu
 
     # Make everything in /ngen accessible
