@@ -96,21 +96,30 @@ cd NextGen/ngen-data
 **Step 2: Download Sample Data**
 
 Use wget to download the compressed data file:
+
+**Option 1: AWI-007 input data (relization file includes - SLOTH, NoahOWP, CFE)**
 ```bash
 wget --no-parent https://ciroh-ua-ngen-data.s3.us-east-2.amazonaws.com/AWI-007/AWI_16_2863657_007.tar.gz
+```
+**Option 2: AWI-008 input data (realization file includes - SLOTH, Demostration LSTM)**
+```bash
+wget --no-parent https://ciroh-ua-ngen-data.s3.us-east-2.amazonaws.com/AWI-008/AWI_16_2863806_008.tar.gz
 ```
 
 **Step 3: Extract and Rename**
 
 Extract the downloaded file and optionally rename the folder:
+
+**Option 1:**
 ```bash
 tar -xf AWI_16_2863657_007.tar.gz
 ```
-### Below is Optional: Rename the folder
+**Option 2:**
 ```bash
-mv AWI_16_2863657_007 my_data
+tar -xf AWI_16_2863806_008.tar.gz
 ```
-Now you have successfully downloaded and prepared the sample input data in the NextGen/ngen-data directory. Remember to replace "my_data" with your preferred folder name if you choose to rename it.
+
+Now you have successfully downloaded and prepared the sample input data in the NextGen/ngen-data directory. 
 
 **Step 4: Clone and Run**
 Navigate to the NextGen directory, clone the repository, and execute the guide script:
