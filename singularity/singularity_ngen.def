@@ -6,9 +6,10 @@ From: rockylinux:9.1
     export TROUTE_BRANCH="datastream"
     export NGEN_REPO="CIROH-UA/ngen"
     export NGEN_BRANCH="ngiab"
-    export PATH="/usr/lib64/mpich/bin:$PATH"
+    export PATH="/usr/lib64/openmpi/bin:$PATH"
     export PATH="/root/.cargo/bin:$PATH"
     export PATH="/ngen/.venv/bin:$PATH"
+    export HYDRA_LAUNCHER=none
 
 %post
     # First set the environment variables for use in %post
@@ -25,7 +26,7 @@ From: rockylinux:9.1
     dnf install -y sudo vim gcc gcc-c++ make cmake ninja-build tar git gcc-gfortran libgfortran sqlite sqlite-devel \
         python3 python3-devel python3-pip gdal gdal-devel \
         bzip2 expat expat-devel flex bison udunits2 udunits2-devel zlib-devel \
-        wget mpich mpich-devel hdf5 hdf5-devel netcdf netcdf-devel \
+        wget openmpi openmpi-devel hdf5 hdf5-devel netcdf netcdf-devel \
         netcdf-fortran netcdf-fortran-devel netcdf-cxx netcdf-cxx-devel lld
     
     # Create necessary directories
@@ -97,15 +98,15 @@ From: rockylinux:9.1
     cmake --build cmake_build_serial --target all -- -j $(nproc)
 
     # Build parallel version
-    dnf install -y netcdf-cxx4-mpich-devel
+    dnf install -y netcdf-cxx4-openmpi-devel
     export MPI_BUILD_ARGS="-DNGEN_WITH_MPI:BOOL=ON \
-        -DNetCDF_ROOT=/usr/lib64/mpich \
-        -DCMAKE_PREFIX_PATH=/usr/lib64/mpich \
-        -DCMAKE_LIBRARY_PATH=/usr/lib64/mpich/lib"
+        -DNetCDF_ROOT=/usr/lib64/openmpi \
+        -DCMAKE_PREFIX_PATH=/usr/lib64/openmpi \
+        -DCMAKE_LIBRARY_PATH=/usr/lib64/openmpi/lib"
     
     cmake -G Ninja -B cmake_build_parallel -S . ${COMMON_BUILD_ARGS} ${MPI_BUILD_ARGS} \
-        -DNetCDF_CXX_INCLUDE_DIR=/usr/include/mpich-$(arch) \
-        -DNetCDF_INCLUDE_DIR=/usr/include/mpich-$(arch)
+        -DNetCDF_CXX_INCLUDE_DIR=/usr/include/openmpi-$(arch) \
+        -DNetCDF_INCLUDE_DIR=/usr/include/openmpi-$(arch)
     cmake --build cmake_build_parallel --target all -- -j $(nproc)
 
     # Setup final directories
