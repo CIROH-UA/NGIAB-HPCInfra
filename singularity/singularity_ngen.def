@@ -88,7 +88,7 @@ From: rockylinux:9.1
         -DNGEN_WITH_UDUNITS:BOOL=ON \
         -DUDUNITS_QUIET:BOOL=ON \
         -DNGEN_WITH_TESTS:BOOL=OFF \
-        -DCMAKE_BUILD_TYPE=Debug \
+        -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_INSTALL_PREFIX=. \
         -DCMAKE_CXX_FLAGS='-fuse-ld=lld'"
 
