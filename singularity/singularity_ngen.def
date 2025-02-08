@@ -3,7 +3,7 @@ From: rockylinux:9.1
 
 %environment
     export TROUTE_REPO="CIROH-UA/t-route"
-    export TROUTE_BRANCH="datastream"
+    export TROUTE_BRANCH="ngiab"
     export NGEN_REPO="CIROH-UA/ngen"
     export NGEN_BRANCH="ngiab"
     export PATH="/usr/lib64/openmpi/bin:$PATH"
@@ -13,7 +13,7 @@ From: rockylinux:9.1
 %post
     # First set the environment variables for use in %post
     TROUTE_REPO="CIROH-UA/t-route"
-    TROUTE_BRANCH="datastream"
+    TROUTE_BRANCH="ngiab"
     NGEN_REPO="CIROH-UA/ngen"
     NGEN_BRANCH="ngiab"
 
