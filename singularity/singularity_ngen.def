@@ -23,7 +23,7 @@ From: rockylinux:9.1
     dnf install -y epel-release
     dnf config-manager --set-enabled crb
     dnf install -y sudo vim gcc gcc-c++ make cmake ninja-build tar git gcc-gfortran libgfortran sqlite sqlite-devel \
-        python3 python3-devel python3-pip gdal gdal-devel \
+        python3 python3-devel python3-pip \
         bzip2 expat expat-devel flex bison udunits2 udunits2-devel zlib-devel \
         wget openmpi openmpi-devel hdf5 hdf5-devel netcdf netcdf-devel \
         netcdf-fortran netcdf-fortran-devel netcdf-cxx netcdf-cxx-devel lld
