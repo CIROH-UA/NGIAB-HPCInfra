@@ -3,7 +3,7 @@ From: rockylinux:9.1
 
 %environment
     export TROUTE_REPO="CIROH-UA/t-route"
-    export TROUTE_BRANCH="datastream"
+    export TROUTE_BRANCH="ngiab"
     export NGEN_REPO="CIROH-UA/ngen"
     export NGEN_BRANCH="ngiab"
     export PATH="/usr/lib64/openmpi/bin:$PATH"
@@ -13,7 +13,7 @@ From: rockylinux:9.1
 %post
     # First set the environment variables for use in %post
     TROUTE_REPO="CIROH-UA/t-route"
-    TROUTE_BRANCH="datastream"
+    TROUTE_BRANCH="ngiab"
     NGEN_REPO="CIROH-UA/ngen"
     NGEN_BRANCH="ngiab"
 
@@ -23,7 +23,7 @@ From: rockylinux:9.1
     dnf install -y epel-release
     dnf config-manager --set-enabled crb
     dnf install -y sudo vim gcc gcc-c++ make cmake ninja-build tar git gcc-gfortran libgfortran sqlite sqlite-devel \
-        python3 python3-devel python3-pip gdal gdal-devel \
+        python3 python3-devel python3-pip \
         bzip2 expat expat-devel flex bison udunits2 udunits2-devel zlib-devel \
         wget openmpi openmpi-devel hdf5 hdf5-devel netcdf netcdf-devel \
         netcdf-fortran netcdf-fortran-devel netcdf-cxx netcdf-cxx-devel lld
@@ -88,7 +88,7 @@ From: rockylinux:9.1
         -DNGEN_WITH_UDUNITS:BOOL=ON \
         -DUDUNITS_QUIET:BOOL=ON \
         -DNGEN_WITH_TESTS:BOOL=OFF \
-        -DCMAKE_BUILD_TYPE=Debug \
+        -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_INSTALL_PREFIX=. \
         -DCMAKE_CXX_FLAGS='-fuse-ld=lld'"
 
