@@ -21,6 +21,7 @@ Color_Off='\033[0m'
 set -e
 
 CONFIG_FILE="$HOME/.host_data_path.conf"
+TETHYS_SCRIPT="./viewOnTethys.sh"
 
 echo -e "\n========================================================="
 echo -e "${UWhite} Welcome to CIROH-UA:NextGen National Water Model App! ${Color_Off}"
@@ -193,5 +194,20 @@ singularity run --bind $HOST_DATA_PATH:/ngen/ngen/data $IMAGE_NAME /ngen/ngen/da
 Final_Outputs_Count=$(find "$HOST_DATA_PATH/outputs/" -type f | wc -l)
 echo -e "$Final_Outputs_Count new outputs created."
 echo -e "Any copied files can be found here: $HOST_DATA_PATH/outputs"
+echo -e "Thank you for running NextGen In A Box: National Water Model! Have a nice day!"
+exit 0
+
+
+# ================================
+# Visualize with Tethys
+if [ $Final_Outputs_Count -gt 0 ]; then
+    ARG1="$HOST_DATA_PATH"
+    if ! "$TETHYS_SCRIPT" "$ARG1"; then
+        printf "Failed to visualize outputs in Tethys:"
+    fi
+else
+    echo -e "No outputs to visualize."
+fi
+
 echo -e "Thank you for running NextGen In A Box: National Water Model! Have a nice day!"
 exit 0
