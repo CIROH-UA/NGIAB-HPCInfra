@@ -290,7 +290,7 @@ trap handle_sigint SIGINT
 # Constanst
 TETHYS_INSTANCE_NAME="tethys-ngen-portal"
 APP_WORKSPACE_PATH="/opt/conda/envs/tethys/lib/python3.12/site-packages/tethysapp/ngiab/workspaces/app_workspace"
-TETHYS_IMAGE_NAME=ciroh-ngen-client-singularity_latest.sif
+TETHYS_IMAGE_NAME=ciroh-ngen-visualizer-singularity_latest.sif
 DATA_FOLDER_PATH="$1"
 TETHYS_PERSIST_PATH="/var/lib/tethys_persist"
 TETHYS_HOME_PATH="/usr/lib/tethys"
@@ -312,11 +312,12 @@ echo -e "\n"
 
 if uname -a | grep arm64 || uname -a | grep aarch64 ; then
     ARCH=arm64
-    TETHYS_IMAGE_URL=library://gioelkin/ngiab/ciroh-ngen-client-singularity:latest_arm
+    TETHYS_IMAGE_URL=library://gioelkin/ngiab/ciroh-ngen-visualizer-singularity:latest_arm
+    echo -e "${URed}${BRed}Singularity Image is not available for this architecture arm64${Color_Off}"
+    exit 1
 else
     ARCH=amd64
-    echo -e "${URed}${BRed}Singularity Image is not available for this architecture yet${Color_Off}"
-    exit 1
+    TETHYS_IMAGE_URL=library://gioelkin/ngiab/ciroh-ngen-visualizer-singularity:latest_x86
 fi
 
 
