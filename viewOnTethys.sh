@@ -315,7 +315,8 @@ if uname -a | grep arm64 || uname -a | grep aarch64 ; then
     TETHYS_IMAGE_URL=library://gioelkin/ngiab/ciroh-ngen-client-singularity:latest_arm
 else
     ARCH=amd64
-    TETHYS_IMAGE_URL=library://gioelkin/ngiab/ciroh-ngen-client-singularity:latest_x86
+    echo -e "${URed}${BRed}Singularity Image is not available for this architecture yet${Color_Off}"
+    exit 1
 fi
 
 
