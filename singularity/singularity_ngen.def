@@ -135,7 +135,12 @@ From: rockylinux:9.1
     for pkg in troute-network troute-routing troute-config troute-nwm; do
         if [ -d "$pkg" ]; then
             echo "Installing package from: $pkg"
-            uv pip install --no-cache-dir "$pkg/"
+            if [ "$pkg" == "troute-routing" ]; then
+                # For troute-routing, use --no-build-isolation
+                uv pip install --no-cache-dir --no-build-isolation "$pkg/"
+            else
+                uv pip install --no-cache-dir "$pkg/"
+            fi
         fi
     done
     uv pip install --no-cache-dir netCDF4==1.6.3
