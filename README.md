@@ -97,11 +97,15 @@ cd NextGen/ngen-data
 
 Use wget to download the compressed data file:
 
-**Option 1: AWI-007 input data (relization file includes - SLOTH, NoahOWP, CFE)**
+**Option 1: AWI-009 input data (realization file includes - SLOTH, NoahOWP, CFE) - calibrated realization file for Provo River near Woodland, UT**
+```bash
+wget --no-parent https://ciroh-ua-ngen-data.s3.us-east-2.amazonaws.com/AWI-009/AWI_16_10154200_009.tar.gz
+```
+**Option 2: AWI-007 input data (relization file includes - SLOTH, NoahOWP, CFE)**
 ```bash
 wget --no-parent https://ciroh-ua-ngen-data.s3.us-east-2.amazonaws.com/AWI-007/AWI_16_2863657_007.tar.gz
 ```
-**Option 2: AWI-008 input data (realization file includes - SLOTH, Demostration LSTM)**
+**Option 3: AWI-008 input data (realization file includes - SLOTH, Demostration LSTM)**
 ```bash
 wget --no-parent https://ciroh-ua-ngen-data.s3.us-east-2.amazonaws.com/AWI-008/AWI_16_2863806_008.tar.gz
 ```
@@ -110,11 +114,15 @@ wget --no-parent https://ciroh-ua-ngen-data.s3.us-east-2.amazonaws.com/AWI-008/A
 
 Extract the downloaded file and optionally rename the folder:
 
-**Option 1:**
+**Option 1**
+```bash
+tar -xf AWI_16_10154200_009.tar.gz
+```
+**Option 2:**
 ```bash
 tar -xf AWI_16_2863657_007.tar.gz
 ```
-**Option 2:**
+**Option 3:**
 ```bash
 tar -xf AWI_16_2863806_008.tar.gz
 ```
