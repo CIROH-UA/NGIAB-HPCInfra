@@ -109,12 +109,13 @@ From: rockylinux:9.1
     cmake --build cmake_build_parallel --target all -- -j $(nproc)
 
     # Setup final directories
-    mkdir -p /dmod/datasets /dmod/datasets/static /dmod/shared_libs /dmod/bin
+    mkdir -p /dmod/datasets /dmod/datasets/static /dmod/shared_libs /dmod/bin /dmod/utils/
     cp -a ./extern/*/cmake_build/*.so* /dmod/shared_libs/. || true
     find ./extern/noah-owp-modular -type f -iname "*.TBL" -exec cp '{}' /dmod/datasets/static \;
     cp -a ./cmake_build_parallel/ngen /dmod/bin/ngen-parallel || true
     cp -a ./cmake_build_serial/ngen /dmod/bin/ngen-serial || true
     cp -a ./cmake_build_parallel/partitionGenerator /dmod/bin/partitionGenerator || true
+    cp -ar ./utilities/* /dmod/utils/
     cd /dmod/bin && \
         (stat ngen-parallel && ln -s ngen-parallel ngen) || (stat ngen-serial && ln -s ngen-serial ngen)
 
@@ -134,7 +135,12 @@ From: rockylinux:9.1
     for pkg in troute-network troute-routing troute-config troute-nwm; do
         if [ -d "$pkg" ]; then
             echo "Installing package from: $pkg"
-            uv pip install --no-cache-dir "$pkg/"
+            if [ "$pkg" == "troute-routing" ]; then
+                # For troute-routing, use --no-build-isolation
+                uv pip install --no-cache-dir --no-build-isolation "$pkg/"
+            else
+                uv pip install --no-cache-dir "$pkg/"
+            fi
         fi
     done
     uv pip install --no-cache-dir netCDF4==1.6.3
