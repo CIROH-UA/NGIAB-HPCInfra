@@ -300,7 +300,6 @@ _copy_models_run() {
 }
 
 
-
 _add_model_run() {
   local input_path="$1"
   local json_file="$HOME/ngiab_visualizer.json"
@@ -341,8 +340,6 @@ _add_model_run() {
      ]' \
      "$json_file" > "${json_file}.tmp" && mv -f "${json_file}.tmp" "$json_file"
 }
-
-
 
 
 create_tethys_portal(){
