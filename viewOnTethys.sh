@@ -323,8 +323,6 @@ _add_model_run() {
 
   # Always use /var/lib/tethys_persist/ngiab_visualizer as the base directory
   local final_path="/var/lib/tethys_persist/ngiab_visualizer/$base_name"
-  echo "DEBUG - base_name: $(printf "%q" "$base_name")"
-  echo "DEBUG - final_path: $(printf "%q" "$final_path")"
   jq --arg base_name "$base_name" \
      --arg final_path  "$final_path" \
      --arg current_time  "$current_time" \
