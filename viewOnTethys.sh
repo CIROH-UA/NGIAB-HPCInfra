@@ -323,11 +323,9 @@ _add_model_run() {
 
   # Always use /var/lib/tethys_persist/ngiab_visualizer as the base directory
   local final_path="/var/lib/tethys_persist/ngiab_visualizer/$base_name"
-  base_name=$(printf "%s" "$base_name" | tr -d '\n\r')
-  final_path=$(printf "%s" "$final_path" | tr -d '\n\r')
   
-  jq --arg label "$base_name" \
-     --arg path  "$final_path" \
+  jq --arg label $base_name \
+     --arg path  $final_path \
      --arg date  "$current_time" \
      --arg id    "$new_uuid" \
      '.model_runs += [ 
