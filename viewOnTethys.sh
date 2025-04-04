@@ -323,6 +323,8 @@ _add_model_run() {
 
   # Always use /var/lib/tethys_persist/ngiab_visualizer as the base directory
   local final_path="/var/lib/tethys_persist/ngiab_visualizer/$base_name"
+  printf "base_name: %s\nfinal_path: %s\ncurrent_time: %s\nnew_uuid: %s\n" \
+    "$base_name" "$final_path" "$current_time" "$new_uuid"
 
   jq '.model_runs += [{
     label: "test-label",
