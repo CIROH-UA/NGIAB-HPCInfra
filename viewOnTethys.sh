@@ -323,21 +323,23 @@ _add_model_run() {
 
   # Always use /var/lib/tethys_persist/ngiab_visualizer as the base directory
   local final_path="/var/lib/tethys_persist/ngiab_visualizer/$base_name"
-  printf "base_name: %s\nfinal_path: %s\ncurrent_time: %s\nnew_uuid: %s\n" \
-    "$base_name" "$final_path" "$current_time" "$new_uuid"
+  sanitized_label=$(printf '%s' "$base_name" | tr -d '\n\r')  # Remove newlines/carriage returns
+  sanitized_path=$(printf '%s' "$final_path" | tr -d '\n\r')
 
-  jq '.model_runs += [{
-    label: "test-label",
-    path: "test-path",
-    date: "2023-10-04",
-    id: "test-id",
-    subset: "",
-    tags: []
-  }]' \
-     "$json_file" > "${json_file}.tmp" && mv -f "${json_file}.tmp" "$json_file"
+    jq --arg label "$sanitized_label" \
+    --arg path  "$sanitized_path" \
+    --arg date  "$current_time" \
+    --arg id    "$new_uuid" \
+    '(.model_runs // []) += [{
+        "label": $label,
+        "path": $path,
+        "date": $date,
+        "id": $id,
+        "subset": "",
+        "tags": []
+        }]' \
+    "$json_file" > "${json_file}.tmp" && mv -f "${json_file}.tmp" "$json_file"
 }
-
-
 create_tethys_portal(){
     while true; do
         echo -e "${BYellow}Visualize outputs using the Tethys Platform (https://www.tethysplatform.org/)? (Y/n, default: n):${Color_Off}"
