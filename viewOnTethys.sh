@@ -364,7 +364,6 @@ create_tethys_portal(){
         echo -e "${BGreen}Setting up Tethys Portal image...${Color_Off}"
         if _check_for_existing_tethys_image; then
             _execute_command _run_containers
-            echo -e "${BCyan}Linking data to the Tethys app workspace.${Color_Off}"
             _wait_singularity_instance $TETHYS_INSTANCE_NAME
             echo -e "${UPurple}Check the App source code: https://github.com/CIROH-UA/ngiab-client ${Color_Off}"
             echo -e "\n\n   Copy/Paste this in your local terminal to ssh tunnel with remote  "
