@@ -323,25 +323,15 @@ _add_model_run() {
 
   # Always use /var/lib/tethys_persist/ngiab_visualizer as the base directory
   local final_path="/var/lib/tethys_persist/ngiab_visualizer/$base_name"
-  
-  echo "$base_name"
-  echo "$final_path"
-  echo "$current_time"
-  echo "$new_uuid"
 
-
-  jq --arg label "$base_name" \
-     --arg path  "$final_path" \
-     --arg date  "$current_time" \
-     --arg id    "$new_uuid" \
-     '.model_runs += [{
-        label: $label,
-        path: $path,
-        date: $date,
-        id: $id,
-        subset: "",
-        tags: []
-      }]' \
+  jq '.model_runs += [{
+    label: "test-label",
+    path: "test-path",
+    date: "2023-10-04",
+    id: "test-id",
+    subset: "",
+    tags: []
+  }]' \
      "$json_file" > "${json_file}.tmp" && mv -f "${json_file}.tmp" "$json_file"
 }
 
