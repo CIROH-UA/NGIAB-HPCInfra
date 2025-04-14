@@ -141,7 +141,7 @@ After the `.guide.sh` script completes execution, you will be prompted to view y
 Note: If you only need to visualize existing outputs without re-running the analysis, you can execute viewOnTethys.sh directly.
 
 ```bash
-cd .viewOnTethys.sh
+sh viewOnTethys.sh
 ```
 
 The visualization server runs on port `8080` of the HPC node. To access it from your local machine:
