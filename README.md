@@ -143,7 +143,24 @@ cd NGIAB-HPCInfra
 ```bash
 ./guide.sh
 ```
+**Step 5: Visualize results**
+After the `.guide.sh` script completes execution, you will be prompted to view your results using the NGIAB visualizer
 
+Note: If you only need to visualize existing outputs without re-running the analysis, you can execute viewOnTethys.sh directly.
+
+```bash
+sh viewOnTethys.sh
+```
+
+The visualization server runs on port `8080` of the HPC node. To access it from your local machine:
+
+```bash
+user@laptop ~ $ ssh -R 8080:localhost:8080 user@hpc_node
+```
+
+This instructs SSH to forward connections from port 8080 on the remote machine to port 8080 on “localhost” (which in the case of remote forwards refers to the local machine)
+
+Access the visualizer by opening in your local browser: `http://localhost:8080`
 
 ## Run NextGen In A Box
 To run NextGen framework, hydrologist only have to execute the [guide script](https://github.com/CIROH-UA/Ngen-Singularity/blob/main/guide.sh) to run simulations on self-contained NextGen framework container image.
