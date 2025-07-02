@@ -56,9 +56,24 @@ NGIAB provides a containerized and user-friendly solution for running the NextGe
 ### 1. Access a compute node
 On your HPC system, request an interactive session on a compute node using your scheduler (e.g., SLURM):
 ```bash
-srun --partition=<partition_name> --nodes=1 --ntasks=1 --time=<hh:mm:ss> --pty bash
+salloc --partition=<partition_name> --nodes=1 --ntasks=<number_of_processors> --time=<hh:mm:ss> -w <compute_node>
 ```
-Replace `<partition_name>` and `<hh:mm:ss>` with the appropriate partition and time limits for your HPC system.
+```bash
+ssh <compute_node>
+```
+Replace `<partition_name>`, `<hh:mm:ss>` and `<compute_node>` with values appropriate for your HPC system.
+
+## SLURM Parameter Reference
+
+| Parameter | Short Form | Description |
+|-----------|------------|-------------|
+| `--partition` | `-p` | Partition requested |
+| `--nodes` | `-N` | Number of nodes on which to run (N = min[-max]) |
+| `--ntasks` | `-n` | Number of processors required |
+| `--time` | `-t` | Time limit |
+| `--nodelist` | `-w` | Request a specific list of hosts |
+
+
 ### 2. Install SingularityCE on HPC
 Ensure SingularityCE is installed and validated on your HPC system. All operations, including data preparation and running the simulation, should be performed on a compute node, not the login node. Consult your system administrator or follow these steps:
 
