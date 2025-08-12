@@ -54,7 +54,7 @@ From: rockylinux:9.1
 
     # Build t-route
     cd /ngen/t-route
-    git clone --depth 1 --single-branch --branch $TROUTE_BRANCH https://github.com/$TROUTE_REPO.git .
+    git clone --single-branch --branch $TROUTE_BRANCH https://github.com/$TROUTE_REPO.git .
     echo $(git remote get-url origin | sed 's/\.git$//' | awk '{print $0 "/tree/" }' | tr -d '\n' && git rev-parse HEAD) >> /tmp/troute_url
     git submodule update --init --depth 1
     uv pip install build wheel
