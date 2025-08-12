@@ -9,6 +9,7 @@ From: rockylinux:9.1
     export PATH="/usr/lib64/openmpi/bin:$PATH"
     export PATH="/root/.cargo/bin:$PATH"
     export PATH="/ngen/.venv/bin:$PATH"
+    export SETUPTOOLS_SCM_PRETEND_VERSION_FOR_TROUTE_CONFIG=1.0.0
 
 %post
     # First set the environment variables for use in %post
