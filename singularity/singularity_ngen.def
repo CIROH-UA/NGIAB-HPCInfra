@@ -9,6 +9,7 @@ From: rockylinux:9.1
     export PATH="/usr/lib64/openmpi/bin:$PATH"
     export PATH="/root/.cargo/bin:$PATH"
     export PATH="/ngen/.venv/bin:$PATH"
+    export UV_COMPILE_BYTECODE=1
 
 %post
     # First set the environment variables for use in %post
@@ -16,6 +17,7 @@ From: rockylinux:9.1
     TROUTE_BRANCH="ngiab"
     NGEN_REPO="CIROH-UA/ngen"
     NGEN_BRANCH="ngiab"
+    export UV_COMPILE_BYTECODE=1
 
     # Install system dependencies
     echo "max_parallel_downloads=10" >> /etc/dnf/dnf.conf
@@ -159,6 +161,16 @@ From: rockylinux:9.1
     ls -l /ngen/ngen/extern/lstm
     cp -r /ngen/ngen/extern/lstm/lstm/* /ngen/ngen/extern/lstm/
     uv pip install --no-cache-dir /ngen/ngen/extern/lstm --extra-index-url https://download.pytorch.org/whl/cpu
+
+    # Clone LSTM weights
+    git clone --depth=1 --branch example_weights https://github.com/ciroh-ua/lstm.git /lstm_weights
+    # Replace relative paths with absolute paths in model config files
+    shopt -s globstar
+    sed -i 's|\.\.|/ngen/ngen/extern/lstm|g' /lstm_weights/trained_neuralhydrology_models/**/config.yml
+
+    # Replace the noaa-owp example weights with jmframes
+    rm -rf /ngen/ngen/extern/lstm/trained_neuralhydrology_models
+    cp -r /lstm_weights/trained_neuralhydrology_models /ngen/ngen/extern/lstm/trained_neuralhydrology_models
 
     # Make everything in /ngen accessible
     chmod -R 755 /ngen
