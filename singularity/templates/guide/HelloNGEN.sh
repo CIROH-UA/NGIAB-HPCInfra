@@ -30,7 +30,7 @@ auto_select_file() {
 # Finding files
 HYDRO_FABRIC_CATCHMENTS=$(find . -name "*.gpkg")
 HYDRO_FABRIC_NEXUS=$(find . -name "*.gpkg")
-NGEN_REALIZATIONS=$(find . -name "*realization*.json")
+NGEN_REALIZATIONS=$(find config/ -name "*realization*.json")
 
 # Auto-selecting files if only one is found
 selected_catchment=$(auto_select_file "$HYDRO_FABRIC_CATCHMENTS")
@@ -85,7 +85,7 @@ if [ "$2" == "auto" ]
 fi
 
 echo -e "${YELLOW}Select an option (type a number): ${RESET}"
-options=("Run NextGen model framework in serial mode" "Run NextGen model framework in parallel mode" "Run Bash shell" "Exit")
+options=("Run NextGen model framework in serial mode" "Run NextGen model framework in parallel mode" "Enter Bash shell (for developers)" "Exit")
 select option in "${options[@]}"; do
   case $option in
     "Run NextGen model framework in serial mode"|"Run NextGen model framework in parallel mode")
@@ -109,9 +109,10 @@ select option in "${options[@]}"; do
       echo -e "${YELLOW}Your NGEN run command is $run_command${RESET}"
       break
       ;;
-    "Run Bash shell")
+    "Enter Bash shell (for developers)")
       echo -e "${CYAN}Starting a shell, simply exit to stop the process.${RESET}"
       /bin/bash
+      echo -e "${CYAN}Shell closed. Hit ${YELLOW}ENTER${CYAN} to continue...${RESET}"
       ;;
     "Exit")
       exit 0
@@ -149,12 +150,13 @@ echo -e "${color}${message}${RESET}"
 
 echo -e "${YELLOW}Would you like to continue?${RESET}"
 echo -e "${YELLOW}Select an option (type a number): ${RESET}"
-options=("Interactive-Shell" "Exit")
+options=("Enter Bash shell (for developers)" "Exit")
 select option in "${options[@]}"; do
   case $option in
-    "Interactive-Shell")
+    "Enter Bash shell (for developers)")
       echo -e "${CYAN}Starting a shell, simply exit to stop the process.${RESET}"
       /bin/bash
+      echo -e "${GREEN}Exiting container. Have a nice day.${RESET}"
       break
       ;;
     "Exit")
