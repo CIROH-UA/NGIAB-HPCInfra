@@ -25,18 +25,23 @@ jobs:
 
       - name: Test
         run: |
-          rm -rf /home/ubuntu/workspace/AWI_16_2863657_007/partitions*.json
-          rm -rf /home/ubuntu/workspace/AWI_16_2863657_007/*.csv
-          rm -rf /home/ubuntu/workspace/AWI_16_2863657_007/*.parquet
-          rm -rf /home/ubuntu/workspace/AWI_16_2863657_007/outputs/*/*
-          singularity run --bind /home/ubuntu/workspace/AWI_16_2863657_007:/ngen/ngen/data ciroh-ngen-singularity.sif /ngen/ngen/data auto 2
-          output_count=`ls /home/ubuntu/workspace/AWI_16_2863657_007/outputs/*/* | wc -l`
-          if [[ "$output_count" < 1 ]]; then
-            echo "No outputs found"
-            exit 1
-          else
-            echo "Test run successfully"
-          fi
+          for dir in /home/ubuntu/workspace/AWI_16_2863657_007 /home/ubuntu/workspace/AWI-10154200-lstm; do
+            echo "Processing $dir ..."
+            rm -rf "$dir"/partitions*.json
+            rm -rf "$dir"/*.csv
+            rm -rf "$dir"/*.parquet
+            rm -rf "$dir"/outputs/*/*
+
+            singularity run --bind "$dir":/ngen/ngen/data ciroh-ngen-singularity.sif /ngen/ngen/data auto 2
+
+            output_count=$(ls "$dir"/outputs/*/* 2>/dev/null | wc -l)
+            if [[ "$output_count" -lt 1 ]]; then
+              echo "No outputs found for $dir"
+              exit 1
+            else
+              echo "Test run successfully for $dir"
+            fi
+          done
           
       - name: Sign Singularity Image
         run: |
