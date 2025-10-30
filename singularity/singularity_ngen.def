@@ -147,7 +147,7 @@ From: rockylinux:9.1
     uv pip install numpy==$(/dmod/bin/ngen --info | grep -e 'NumPy Version: ' | cut -d ':' -f 2 | uniq | xargs)
 
     # Install lstm (no directory copying needed)
-    uv pip install --no-cache-dir /ngen/ngen/extern/lstm --extra-index-url https://download.pytorch.org/whl/cpu
+    uv pip install --no-cache-dir /ngen/ngen/extern/lstm/lstm --extra-index-url https://download.pytorch.org/whl/cpu
 
     # Clone and process LSTM weights
     git clone --depth=1 --branch example_weights https://github.com/ciroh-ua/lstm.git /lstm_weights
