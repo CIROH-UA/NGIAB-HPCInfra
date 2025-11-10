@@ -172,7 +172,7 @@ From: rockylinux:9.1
     mkdir -p /build
     cd /build
     git clone --depth=1 https://github.com/aaraney/bmi-rs
-    git clone --depth=1 --branch v0.1.0 https://github.com/ciroh-ua/rust-lstm-1025
+    git clone --depth=1 --branch bmi_rs_pin https://github.com/ciroh-ua/rust-lstm-1025
     cd /build/rust-lstm-1025
     cargo build --release
     
