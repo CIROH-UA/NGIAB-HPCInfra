@@ -153,10 +153,13 @@ From: rockylinux:9.1
     git clone --depth=1 --branch example_weights https://github.com/ciroh-ua/lstm.git /lstm_weights
     
     # Convert weights using rust conversion script
+    # Download the conversion script locally
+    curl -L https://raw.githubusercontent.com/CIROH-UA/rust-lstm-1025/refs/tags/v0.1.0/scripts/convert.py -o /tmp/convert.py
+    # Optionally verify the hash (uncomment and set the correct hash if desired)
+    # echo "EXPECTED_HASH  /tmp/convert.py" | sha256sum -c -
     uv run --with pyyaml --with numpy --with torch --extra-index-url https://download.pytorch.org/whl/cpu \
-        https://raw.githubusercontent.com/CIROH-UA/rust-lstm-1025/refs/tags/v0.1.0/scripts/convert.py \
-        all /lstm_weights/trained_neuralhydrology_models/
-    
+        /tmp/convert.py all /lstm_weights/trained_neuralhydrology_models/
+    rm -f /tmp/convert.py
     # Replace relative paths with absolute paths
     shopt -s globstar
     sed -i 's|\.\.|/ngen/ngen/extern/lstm|g' /lstm_weights/trained_neuralhydrology_models/**/config.yml
