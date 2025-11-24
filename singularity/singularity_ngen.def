@@ -9,15 +9,22 @@ From: rockylinux:9.1
     export PATH="/usr/lib64/openmpi/bin:$PATH"
     export PATH="/root/.cargo/bin:$PATH"
     export PATH="/ngen/.venv/bin:$PATH"
+    export UV_INSTALL_DIR="/root/.cargo/bin"
     export UV_COMPILE_BYTECODE=1
 
 %post
-    # First set the environment variables for use in %post
+    # Set environment variables for build
     TROUTE_REPO="CIROH-UA/t-route"
     TROUTE_BRANCH="ngiab"
     NGEN_REPO="CIROH-UA/ngen"
     NGEN_BRANCH="ngiab"
+    export UV_INSTALL_DIR="/root/.cargo/bin"
     export UV_COMPILE_BYTECODE=1
+    export PATH="/root/.cargo/bin:$PATH"
+
+    # Install UV early
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    uv self update
 
     # Install system dependencies
     echo "max_parallel_downloads=10" >> /etc/dnf/dnf.conf
@@ -28,42 +35,33 @@ From: rockylinux:9.1
         python3 python3-devel python3-pip \
         bzip2 expat expat-devel flex bison udunits2 udunits2-devel zlib-devel \
         wget openmpi openmpi-devel hdf5 hdf5-devel netcdf netcdf-devel \
-        netcdf-fortran netcdf-fortran-devel netcdf-cxx netcdf-cxx-devel lld
+        netcdf-fortran netcdf-fortran-devel netcdf-cxx netcdf-cxx4-openmpi netcdf-cxx-devel lld clang
     
     # Create necessary directories
-    mkdir -p /ngen
-    mkdir -p /ngen/t-route
+    mkdir -p /ngen /ngen/t-route /dmod/datasets /dmod/datasets/static /dmod/shared_libs /dmod/bin /dmod/utils/
 
-    # Build Boost
+    # Build Boost (headers only)
     cd /
-    wget https://archives.boost.io/release/1.79.0/source/boost_1_79_0.tar.gz
-    tar -xzf boost_1_79_0.tar.gz
-    cd boost_1_79_0
-    ./bootstrap.sh && ./b2 && ./b2 headers
-    export BOOST_ROOT=/boost_1_79_0
+    wget https://archives.boost.io/release/1.86.0/source/boost_1_86_0.tar.gz
+    tar -xzf boost_1_86_0.tar.gz
+    cd boost_1_86_0
+    ./bootstrap.sh && ./b2 headers
+    export BOOST_ROOT=/boost_1_86_0
 
     # Setup for troute
     cd /ngen
     export FC=gfortran
     export NETCDF=/usr/lib64/gfortran/modules/
-    ln -s /usr/bin/python3 /usr/bin/python
+    ln -s /usr/bin/python3 /usr/bin/python 2>/dev/null || true
 
-    # Install UV and setup Python environment
-    pip3 install uv && uv venv
-    . /ngen/.venv/bin/activate
+    # Setup Python venv and install troute requirements
+    uv venv
+    export PATH="/ngen/.venv/bin:$PATH"
     uv pip install -r "https://raw.githubusercontent.com/${TROUTE_REPO}/refs/heads/${TROUTE_BRANCH}/requirements.txt"
 
     # Build t-route
     cd /ngen/t-route
-
-    ## Fix setuptools_scm before cloning
-    export SETUPTOOLS_SCM_PRETEND_VERSION=1.0.0
-    export SETUPTOOLS_SCM_PRETEND_VERSION_FOR_TROUTE_CONFIG=1.0.0
-    export SETUPTOOLS_SCM_PRETEND_VERSION_FOR_TROUTE_NETWORK=1.0.0
-    export SETUPTOOLS_SCM_PRETEND_VERSION_FOR_TROUTE_ROUTING=1.0.0
-    export SETUPTOOLS_SCM_PRETEND_VERSION_FOR_TROUTE_NWM=1.0.0
-
-    git clone --single-branch --branch $TROUTE_BRANCH https://github.com/$TROUTE_REPO.git .
+    git clone --depth 1 --single-branch --branch $TROUTE_BRANCH https://github.com/$TROUTE_REPO.git .
     echo $(git remote get-url origin | sed 's/\.git$//' | awk '{print $0 "/tree/" }' | tr -d '\n' && git rev-parse HEAD) >> /tmp/troute_url
     git submodule update --init --depth 1
     uv pip install build wheel
@@ -72,13 +70,16 @@ From: rockylinux:9.1
     sed -i 's/build_[a-z]*=/#&/' compiler.sh
     ./compiler.sh no-e
 
-    # Install troute packages
+    # Build troute wheels
     uv pip install --config-setting='--build-option=--use-cython' src/troute-network/
     uv build --wheel --config-setting='--build-option=--use-cython' src/troute-network/
     uv pip install --no-build-isolation --config-setting='--build-option=--use-cython' src/troute-routing/
     uv build --wheel --no-build-isolation --config-setting='--build-option=--use-cython' src/troute-routing/
     uv build --wheel --no-build-isolation src/troute-config/
     uv build --wheel --no-build-isolation src/troute-nwm/
+
+    # Copy wheels to /tmp for later installation
+    cp src/troute-*/dist/*.whl /tmp/
 
     # Clone and build NGEN
     cd /ngen
@@ -87,7 +88,10 @@ From: rockylinux:9.1
     git submodule update --init --recursive --depth 1
     echo $(git remote get-url origin | sed 's/\.git$//' | awk '{print $0 "/tree/" }' | tr -d '\n' && git rev-parse HEAD) >> /tmp/ngen_url
 
-    # Build NGEN
+    # Add OpenMPI to PATH for build
+    export PATH="${PATH}:/usr/lib64/openmpi/bin"
+
+    # Define build arguments
     export COMMON_BUILD_ARGS="-DNGEN_WITH_EXTERN_ALL=ON \
         -DNGEN_WITH_NETCDF:BOOL=ON \
         -DNGEN_WITH_BMI_C:BOOL=ON \
@@ -118,10 +122,10 @@ From: rockylinux:9.1
         -DNetCDF_INCLUDE_DIR=/usr/include/openmpi-$(arch)
     cmake --build cmake_build_parallel --target all -- -j $(nproc)
 
-    # Setup final directories
-    mkdir -p /dmod/datasets /dmod/datasets/static /dmod/shared_libs /dmod/bin /dmod/utils/
-    cp -a ./extern/*/cmake_build/*.so* /dmod/shared_libs/. || true
-    find ./extern/noah-owp-modular -type f -iname "*.TBL" -exec cp '{}' /dmod/datasets/static \;
+    # Setup final directories with globstar
+    shopt -s globstar
+    cp -a ./extern/**/cmake_build/*.so* /dmod/shared_libs/. || true
+    cp -a ./extern/noah-owp-modular/**/*.TBL /dmod/datasets/static || true
     cp -a ./cmake_build_parallel/ngen /dmod/bin/ngen-parallel || true
     cp -a ./cmake_build_serial/ngen /dmod/bin/ngen-serial || true
     cp -a ./cmake_build_parallel/partitionGenerator /dmod/bin/partitionGenerator || true
@@ -129,61 +133,64 @@ From: rockylinux:9.1
     cd /dmod/bin && \
         (stat ngen-parallel && ln -s ngen-parallel ngen) || (stat ngen-serial && ln -s ngen-serial ngen)
 
-    # Final setup
+    # Setup library path and symlinks
     echo "/dmod/shared_libs/" >> /etc/ld.so.conf.d/ngen.conf && ldconfig -v
     ln -s /dmod/bin/ngen /usr/local/bin/ngen
     chmod a+x /dmod/bin/*
 
-    # Install final Python dependencies
-    export UV_INSTALL_DIR="/root/.cargo/bin"
-    export PATH="$UV_INSTALL_DIR:$PATH"
-    curl -LsSf https://astral.sh/uv/install.sh | sh
-    uv self update && uv venv
-    cd /ngen/t-route/src
-    ls -la troute-*/
+    # Install troute wheels from /tmp
+    cd /ngen
+    uv pip install --no-cache-dir /tmp/*.whl netCDF4==1.6.3
+    rm -rf /tmp/*.whl
 
-    for pkg in troute-network troute-routing troute-config troute-nwm; do
-        if [ -d "$pkg" ]; then
-            echo "Installing package from: $pkg"
-            if [ "$pkg" == "troute-routing" ]; then
-                # For troute-routing, use --no-build-isolation
-                uv pip install --no-cache-dir --no-build-isolation "$pkg/"
-            else
-                uv pip install --no-cache-dir "$pkg/"
-            fi
-        fi
-    done
-    uv pip install --no-cache-dir netCDF4==1.6.3
+    # Install numpy matching ngen's expected version
     uv pip install numpy==$(/dmod/bin/ngen --info | grep -e 'NumPy Version: ' | cut -d ':' -f 2 | uniq | xargs)
 
-    # Install lstm
-    ls -l /ngen/ngen/extern
-    ls -l /ngen/ngen/extern/lstm
-    cp -r /ngen/ngen/extern/lstm/lstm/* /ngen/ngen/extern/lstm/
-    uv pip install --no-cache-dir /ngen/ngen/extern/lstm --extra-index-url https://download.pytorch.org/whl/cpu
+    # Install lstm (no directory copying needed)
+    uv pip install --no-cache-dir /ngen/ngen/extern/lstm/lstm --extra-index-url https://download.pytorch.org/whl/cpu
 
-    # Clone LSTM weights
+    # Clone and process LSTM weights
     git clone --depth=1 --branch example_weights https://github.com/ciroh-ua/lstm.git /lstm_weights
-    # Replace relative paths with absolute paths in model config files
+    
+    # Convert weights using rust conversion script
+    # Download the conversion script locally
+    curl -L https://raw.githubusercontent.com/CIROH-UA/rust-lstm-1025/refs/tags/v0.1.0/scripts/convert.py -o /tmp/convert.py
+    # Optionally verify the hash (uncomment and set the correct hash if desired)
+    # echo "EXPECTED_HASH  /tmp/convert.py" | sha256sum -c -
+    uv run --with pyyaml --with numpy --with torch --extra-index-url https://download.pytorch.org/whl/cpu \
+        /tmp/convert.py all /lstm_weights/trained_neuralhydrology_models/
+    rm -f /tmp/convert.py
+    # Replace relative paths with absolute paths
     shopt -s globstar
     sed -i 's|\.\.|/ngen/ngen/extern/lstm|g' /lstm_weights/trained_neuralhydrology_models/**/config.yml
 
-    # Replace the noaa-owp example weights with jmframes
+    # Replace the noaa-owp example weights
     rm -rf /ngen/ngen/extern/lstm/trained_neuralhydrology_models
     cp -r /lstm_weights/trained_neuralhydrology_models /ngen/ngen/extern/lstm/trained_neuralhydrology_models
 
-    # Make everything in /ngen accessible
-    chmod -R 755 /ngen
+    # Build rust-lstm
+    cd /
+    curl https://sh.rustup.rs -sSf | bash -s -- -y
+    source $HOME/.cargo/env
+    mkdir -p /build
+    cd /build
+    git clone --depth=1 --branch v0.1.2 https://github.com/ciroh-ua/rust-lstm-1025
+    cd /build/rust-lstm-1025
+    cargo build --release
     
-    # Set permissions for critical directories and files
-    chmod -R 755 /dmod
-    chmod -R 755 /usr/local/bin
-    chmod -R 755 /ngen/.venv
-    
-    # Ensure specific files are executable
-    chmod 755 /ngen/HelloNGEN.sh
-    chmod 755 /dmod/bin/*
-    chmod 755 /usr/local/bin/ngen
+    # Copy rust-lstm library to shared libs
+    cp /build/rust-lstm-1025/target/release/librust_lstm_1025.so /dmod/shared_libs/librust_lstm_1025.so
+    ldconfig -v
+
+    # Set permissions
+    chmod -R 755 /ngen /dmod /usr/local/bin /ngen/.venv
+    chmod 755 /ngen/HelloNGEN.sh /dmod/bin/* /usr/local/bin/ngen
+
+    # Add custom prompt
+    echo "export PS1='\u\[\033[01;32m\]@ngiab_dev\[\033[00m\]:\[\033[01;35m\]\W\[\033[00m\]\$ '" >> ~/.bashrc
+
+    # Cleanup build artifacts
+    rm -rf /boost_1_86_0* /build /lstm_weights
 
 %files
     templates/guide/HelloNGEN.sh /ngen/HelloNGEN.sh
