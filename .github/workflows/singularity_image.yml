@@ -21,7 +21,7 @@ jobs:
 
       - name: Build Singularity Image
         run: |
-          sudo singularity build ciroh-ngen-singularity.sif singularity_ngen.def
+          singularity pull ciroh-ngen-singularity.sif docker://awiciroh/ciroh-ngen-image
 
       - name: Test
         run: |
@@ -42,7 +42,7 @@ jobs:
               echo "Test run successfully for $dir"
             fi
           done
-          
+
       - name: Sign Singularity Image
         run: |
            singularity sign --keyidx 0 ciroh-ngen-singularity.sif <<EOF
@@ -54,14 +54,14 @@ jobs:
         run: |
            # Debug: Check token length (don't print the actual token)
            echo "Token length: ${#SYLABS_AUTH_TOKEN}"
-        
+
            # Create a temporary file for the token
            TOKEN_FILE=$(mktemp)
            echo "$SYLABS_AUTH_TOKEN" > "$TOKEN_FILE"
-        
+
            # Debug: Check file content length
            echo "Token file content length: $(wc -c < "$TOKEN_FILE")"
-        
+
            # Attempt to login
            if singularity remote login --tokenfile "$TOKEN_FILE"; then
               echo "Login successful"
@@ -72,6 +72,6 @@ jobs:
               echo "Login failed"
               exit 1
            fi
-        
+
            # Clean up
            rm "$TOKEN_FILE"
