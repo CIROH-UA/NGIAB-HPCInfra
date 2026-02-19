@@ -235,7 +235,7 @@ From: rockylinux:9.1
     
     # Build dmg (generic_deltamodel)
     cd /tmp/dhbv_build
-    git clone --depth=1 https://github.com/mhpi/generic_deltamodel.git
+    git clone https://github.com/mhpi/generic_deltamodel.git
     cd generic_deltamodel
     git checkout ede7a448bff2889cb685bd491ee0d1e64fa54198
     uv build --wheel
@@ -243,7 +243,7 @@ From: rockylinux:9.1
     
     # Build hydrodl2
     cd /tmp/dhbv_build
-    git clone --depth=1 https://github.com/mhpi/hydrodl2.git
+    git clone https://github.com/mhpi/hydrodl2.git
     cd hydrodl2
     git checkout 7267a5a7b8909d0f4ae04d48b38b32a5e88c2146
     uv build --wheel
@@ -251,7 +251,7 @@ From: rockylinux:9.1
     
     # Build dhbv2
     cd /tmp/dhbv_build
-    git clone --depth=1 https://github.com/mhpi/dhbv2.git
+    git clone https://github.com/mhpi/dhbv2.git
     cd dhbv2
     git checkout 39379fd435747a3f765d1a2201d613f9f0087448
     
