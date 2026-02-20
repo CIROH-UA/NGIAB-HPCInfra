@@ -25,7 +25,7 @@ jobs:
 
       - name: Test
         run: |
-          for dir in /home/ubuntu/workspace/AWI_16_2863657_007 /home/ubuntu/workspace/AWI-10154200-lstm; do
+          for dir in /home/ubuntu/workspace/AWI_16_2863657_007 /home/ubuntu/workspace/AWI-10154200-lstm /home/ubuntu/workspace/AWI_16_01073000_011; do
             echo "Processing $dir ..."
             rm -rf "$dir"/partitions*.json
             rm -rf "$dir"/*.csv
