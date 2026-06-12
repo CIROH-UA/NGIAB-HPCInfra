@@ -124,7 +124,7 @@ From: rockylinux:9.1
     cmake --build cmake_build_parallel --target all -- -j $(nproc)
 
     # ========================================================================
-    # BUILD SUNDIALS (NEW - Required for SUMMA)
+    # BUILD SUNDIALS (Required for SUMMA)
     # ========================================================================
     cd /
     mkdir -p /sundials
@@ -149,7 +149,7 @@ From: rockylinux:9.1
     ldconfig -v
 
     # ========================================================================
-    # BUILD SUMMA (NEW)
+    # BUILD SUMMA
     # ========================================================================
     cd /ngen/ngen/extern/summa
     cmake -G Ninja -B build_summa \
@@ -165,6 +165,26 @@ From: rockylinux:9.1
     
     # Copy SUMMA shared libraries
     cp build_summa/*.so /dmod/shared_libs/
+
+    # ========================================================================
+    # BUILD SAC-SMA (NEW)
+    # ========================================================================
+    cd /ngen/ngen/extern/sac-sma
+    cmake -B cmake_build \
+        -DISO_C_FORTRAN_BMI_PATH=/ngen/ngen/extern/iso_c_fortran_bmi \
+        -S .
+    cmake --build cmake_build -j $(nproc)
+    cp cmake_build/*.so /dmod/shared_libs/
+
+    # ========================================================================
+    # BUILD SNOW17 (NEW)
+    # ========================================================================
+    cd /ngen/ngen/extern/snow17
+    cmake -B cmake_build \
+        -DISO_C_FORTRAN_BMI_PATH=/ngen/ngen/extern/iso_c_fortran_bmi \
+        -S .
+    cmake --build cmake_build -j $(nproc)
+    cp cmake_build/*.so /dmod/shared_libs/
 
     # ========================================================================
     # Setup final directories with globstar
@@ -228,63 +248,23 @@ From: rockylinux:9.1
     ldconfig -v
 
     # ========================================================================
-    # BUILD DHBV2 WHEELS (NEW)
+    # INSTALL DHBV2 FROM PYPI (CHANGED - previously built from source)
     # ========================================================================
-    cd /
-    mkdir -p /tmp/dhbv_build /tmp/dhbv_wheels
-    
-    # Build dmg (generic_deltamodel)
-    cd /tmp/dhbv_build
-    rm -rf generic_deltamodel
-    git clone https://github.com/mhpi/generic_deltamodel.git
-    cd generic_deltamodel
-    git checkout ede7a448bff2889cb685bd491ee0d1e64fa54198
-    uv build --wheel
-    cp dist/*.whl /tmp/dhbv_wheels/
-    
-    # Build hydrodl2
-    cd /tmp/dhbv_build
-    rm -rf hydrodl2
-    git clone https://github.com/mhpi/hydrodl2.git
-    cd hydrodl2
-    git checkout 7267a5a7b8909d0f4ae04d48b38b32a5e88c2146
-    uv build --wheel
-    cp dist/*.whl /tmp/dhbv_wheels/
-    
-    # Build dhbv2
-    cd /tmp/dhbv_build
-    rm -rf dhbv2
-    git clone https://github.com/mhpi/dhbv2.git
-    cd dhbv2
-    git checkout 39379fd435747a3f765d1a2201d613f9f0087448
-    
-    # Patch pyproject.toml to use local wheels instead of git dependencies
-    sed -i 's|"dmg @ git+https://github.com/mhpi/generic_deltamodel.git@master"|"dmg"|' pyproject.toml
-    sed -i 's|"hydrodl2 @ git+https://github.com/mhpi/hydrodl2.git@master"|"hydrodl2"|' pyproject.toml
-    
-    uv build --wheel
-    cp dist/*.whl /tmp/dhbv_wheels/
-    
-    # Install dhbv2 and dependencies
     cd /ngen
-    uv pip install --no-cache-dir /tmp/dhbv_wheels/*.whl --extra-index-url https://download.pytorch.org/whl/cpu
+    uv pip install "dmg==1.4.0" "hydrodl2==1.3.5" "dhbv2==0.5.3" \
+        --extra-index-url https://download.pytorch.org/whl/cpu
 
     # ========================================================================
-    # DOWNLOAD DHBV2 MODEL WEIGHTS (NEW)
+    # DOWNLOAD DHBV2 MODEL WEIGHTS
     # ========================================================================
     mkdir -p /ngen/ngen/extern/dhbv2/ngen_resources/data/dhbv_2_mts/model/
     mkdir -p /ngen/ngen/extern/dhbv2/ngen_resources/data/dhbv_2/model/
-    
-    # Download and extract dhbv_2_mts weights
-    cd /tmp
-    wget https://mhpi-spatial.s3.us-east-2.amazonaws.com/mhpi-release/models/owp/dhbv_2_mts.tar.gz
-    tar -xzf dhbv_2_mts.tar.gz -C /ngen/ngen/extern/dhbv2/ngen_resources/data/dhbv_2_mts/model/
-    rm dhbv_2_mts.tar.gz
-    
-    # Download and extract dhbv_2 weights
-    wget https://mhpi-spatial.s3.us-east-2.amazonaws.com/mhpi-release/models/owp/dhbv_2.tar.gz
-    tar -xzf dhbv_2.tar.gz -C /ngen/ngen/extern/dhbv2/ngen_resources/data/dhbv_2/model/
-    rm dhbv_2.tar.gz
+
+    curl -fsSL https://mhpi-spatial.s3.us-east-2.amazonaws.com/mhpi-release/models/owp/dhbv_2_mts.tar.gz \
+        | tar -xz -C /ngen/ngen/extern/dhbv2/ngen_resources/data/dhbv_2_mts/model/ --strip-components=1
+
+    curl -fsSL https://mhpi-spatial.s3.us-east-2.amazonaws.com/mhpi-release/models/owp/dhbv_2.tar.gz \
+        | tar -xz -C /ngen/ngen/extern/dhbv2/ngen_resources/data/dhbv_2/model/ --strip-components=1
 
     # ========================================================================
     # FINAL SETUP
